@@ -7,6 +7,7 @@ class Tabuleiro{
         this.cases = [];
         this.wave = 0;
         this.quantidade = 0;
+        this.newMatriz = [];
     }
 
     criarMatriz = () => {
@@ -20,15 +21,9 @@ class Tabuleiro{
             const atribuirValores = linhas[i].trim().split(' ').map(Number);
             matriz[i] = atribuirValores;
         }
-        //matriz[0][1] = 1;
-        /*matriz[0][2] = 1;
-        matriz[1][1] = 1;
-        matriz[1][0] = 1;
-        matriz[1][2] = 1;*/
-        /*matriz[1][2] = 1;
-        matriz[1][3] = 1;
-        matriz[1][3] = 1;
-        matriz[1][4] = 1;*/
+
+        this.newMatriz = matriz.slice().map(arrays => arrays.slice());
+
         this.verificaPosicoes(matriz);
     }
 
@@ -135,13 +130,13 @@ class Tabuleiro{
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
                     //console.log(this.quantidade);
-                } 
+                }
 
                 if(matriz[indiceArray][indice] == this.branco){ //Conferindo se é branco ou verde
-                    this.quantidade > 1 && this.quantidade < 5 ? matriz[indiceArray][indice] = this.verde : null;
+                    this.quantidade > 1 && this.quantidade < 5 ? this.newMatriz[indiceArray][indice] = this.verde : null;
                     //console.log('era branco:',matriz[indiceArray][indice]);
                 } else if(matriz[indiceArray][indice] == this.verde){
-                    this.quantidade > 3 && this.quantidade < 6 ? null : matriz[indiceArray][indice] = this.branco;
+                    this.quantidade > 3 && this.quantidade < 6 ? null : this.newMatriz[indiceArray][indice] = this.branco;
                     //console.log('era verde:',matriz[indiceArray][indice]);
                 }
 
@@ -149,13 +144,13 @@ class Tabuleiro{
                 this.quantidade = 0;
             })
         })
-        
+        matriz = this.newMatriz.slice().map(arrays => arrays.slice());
         this.wave++;
         console.log("Wave:",this.wave);
-        if(this.wave == 10){
+        //console.log(matriz[0])
+        if(this.wave == 2){
             return;
         }
-        console.log(matriz[0]);
         this.verificaPosicoes(matriz);
     }
 }

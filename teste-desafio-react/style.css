@@ -1,0 +1,21 @@
+.areaAutomata{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.area{
+    width: 1020px;
+}
+
+button{
+    height: 50px;
+    width: 100px;
+    border-radius: 4px;
+    margin-top: 14px;
+    font-size: 15px;
+}
+#proximo{
+    position: absolute;
+    margin-left: 500px;
+}
