@@ -78,6 +78,7 @@ class Tabuleiro{
     verificaPosicoes = (matriz) => {
         matriz.forEach((arrays, indiceArray) =>{
             arrays.forEach((numbers, indice) => {
+            
                 /*if(indiceArray == 0 && indice == 1){
                     if(
                         matriz[indiceArray][indice+1] == this.verde &&
@@ -93,9 +94,9 @@ class Tabuleiro{
             })
         })
 
-        console.log(this.positionVerdes)
+        console.log(this.positionVerdes);
     }
-    
+
     adicionarPosicao(){
 
     }
