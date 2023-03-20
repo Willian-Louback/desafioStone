@@ -8,6 +8,8 @@ class Tabuleiro{
         this.wave = 0;
         this.quantidade = 0;
         this.newMatriz = [];
+        this.playerPosition;
+        this.contador = 0; // Excluir depois estes contador, só para testes
     }
 
     criarMatriz = () => {
@@ -24,11 +26,27 @@ class Tabuleiro{
 
         this.newMatriz = matriz.slice().map(arrays => arrays.slice());
 
+        this.playerPosition = matriz[0][0];
+
         this.verificaPosicoes(matriz);
     }
 
     verificaPosicoes = (matriz) => {
-        this.adicionarPosicao(matriz);
+        this.moverPlayer(matriz);
+    }
+
+    moverPlayer = (matriz) => {
+        console.log(this.playerPosition)
+        this.contador++;
+        this.playerPosition = matriz[this.contador][0];
+        
+        if(this.playerPosition == this.verde){
+            console.log('Game Over: ', this.playerPosition);
+        } else if(this.playerPosition == 4){
+            console.log('Parabéns, você chegou!');
+        } else {
+            this.adicionarPosicao(matriz);
+        }
     }
 
     adicionarPosicao(matriz){
@@ -148,9 +166,9 @@ class Tabuleiro{
         this.wave++;
         console.log("Wave:",this.wave);
         //console.log(matriz[0])
-        if(this.wave == 2){
+        /*if(this.wave == 2){
             return;
-        }
+        }*/
         this.verificaPosicoes(matriz);
     }
 }
