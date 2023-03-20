@@ -8,8 +8,13 @@ class Tabuleiro{
         this.wave = 0;
         this.quantidade = 0;
         this.newMatriz = [];
+        //playerSettings
         this.playerPosition;
+        this.playerArray;
+        this.playerIndice;
+        //testes Abaixo
         this.contador = 0; // Excluir depois estes contador, só para testes
+        this.evitar = [];
     }
 
     criarMatriz = () => {
@@ -31,25 +36,7 @@ class Tabuleiro{
         this.verificaPosicoes(matriz);
     }
 
-    verificaPosicoes = (matriz) => {
-        this.moverPlayer(matriz);
-    }
-
-    moverPlayer = (matriz) => {
-        console.log(this.playerPosition)
-        this.contador++;
-        this.playerPosition = matriz[this.contador][0];
-        
-        if(this.playerPosition == this.verde){
-            console.log('Game Over: ', this.playerPosition);
-        } else if(this.playerPosition == 4){
-            console.log('Parabéns, você chegou!');
-        } else {
-            this.adicionarPosicao(matriz);
-        }
-    }
-
-    adicionarPosicao(matriz){
+    verificaPosicoes = (matriz) => { //Verificando as posições, mas sem adicionar na Matriz
         matriz.forEach((arrays, indiceArray) => {
             arrays.forEach((numbers, indice) => {
                 if(indiceArray == 0 && indice == 1){ //cuidando do canto superior esquerdo
@@ -59,6 +46,17 @@ class Tabuleiro{
                         matriz[indiceArray+1][indice-1],
                         matriz[indiceArray+1][indice+1]
                     ]
+                    if(this.playerArray == indiceArray && this.playerIndice == indice){ 
+                        /*Eu preciso verificar se o player está no primeiro indiceArray (0),
+                        e também o indice em que ele está*/
+                        console.log('passou\n playerArray:',this.playerArray,'array:',indiceArray,'\nplayerIndice:',this.playerIndice,'indice:',indice);
+                        this.evitar = [
+                            matriz[indiceArray][indice+1],
+                            matriz[indiceArray+1][indice],
+                            matriz[indiceArray+1][indice-1],
+                            matriz[indiceArray+1][indice+1]
+                        ]
+                    }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
                     //console.log(this.quantidade);
@@ -162,6 +160,39 @@ class Tabuleiro{
                 this.quantidade = 0;
             })
         })
+        this.moverPlayer(this.newMatriz, matriz);
+    }
+
+    moverPlayer = (matrizAtualizada, matriz) => {
+        console.log(this.playerPosition);
+        this.contador++;
+        //Colocar condições depois
+        this.playerPosition = matriz[0][this.contador];
+        this.playerArray = 0;
+        this.playerIndice = this.contador;
+
+        if(this.evitar[0] == this.branco){ //Para ficar em um padrão, eu posso deixar tudo igual e adicionar um valor diferente de 0 e de 1 no evitar, para o if testar as possibilidades
+            this.evitar = [];
+            this.adicionarPosicao(matriz);
+        } else if(this.evitar[1] == this.branco){
+            this.evitar = [];
+            this.adicionarPosicao(matriz);
+        } else if(this.evitar[2] == this.branco){
+            this.evitar = [];
+            this.adicionarPosicao(matriz);
+        } else if(this.evitar[3] == this.branco){
+            this.evitar = [];
+            this.adicionarPosicao(matriz);
+        } else {
+            console.log('nada');
+            this.evitar = [];
+            this.adicionarPosicao(matriz);
+        }
+        
+        
+    }
+
+    adicionarPosicao(matriz){ //Adicionando na Matriz
         matriz = this.newMatriz.slice().map(arrays => arrays.slice());
         this.wave++;
         console.log("Wave:",this.wave);
@@ -169,7 +200,14 @@ class Tabuleiro{
         /*if(this.wave == 2){
             return;
         }*/
-        this.verificaPosicoes(matriz);
+
+        if(this.playerPosition == this.verde){
+            console.log('Game Over: ', this.playerPosition);
+        } else if(this.playerPosition == 4){
+            console.log('Parabéns, você chegou!');
+        } else {
+            this.verificaPosicoes(matriz);
+        }
     }
 }
 
