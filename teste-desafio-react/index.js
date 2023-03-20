@@ -29,7 +29,7 @@ class Tabuleiro{
             this.span.innerHTML += this.matriz[indiceArray]+"\n";
         })
 
-        this.h1.innerHTML = 'Geração: 0'
+        this.h1.innerHTML = 'Geração: 0';
         this.newMatriz = this.matriz.slice().map(arrays => arrays.slice());
         //this.adicionarPosicao(this.matriz);
     }
