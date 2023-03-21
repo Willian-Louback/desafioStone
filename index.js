@@ -9,7 +9,6 @@ class Tabuleiro{
         this.quantidade = 0;
         this.newMatriz = [];
         this.playerPosition;
-        //verificaEvitars Abaixo
         //contador
         this.contadorH = 0;
         this.contadorV = 0;
