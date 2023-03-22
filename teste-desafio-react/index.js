@@ -10,6 +10,7 @@ class Tabuleiro{
         this.newMatriz = [];
         this.h1 = document.getElementById('geracao');
         this.chave = false;
+        this.ativadorC = false;
         this.playerPosition;
         //contador
         this.contadorH = 0;
@@ -20,6 +21,7 @@ class Tabuleiro{
     }
 
     criarMatriz = async () => {
+        this.span.innerHTML = "";
         await fetch('http://localhost:3010/matriz')
             .then(response => response.json())
             .then(data => this.matriz = data)
@@ -39,6 +41,7 @@ class Tabuleiro{
         this.h1.innerHTML = 'Geração: 0';
         this.newMatriz = this.matriz.slice().map(arrays => arrays.slice());
         this.playerPosition = this.matriz[0][0];
+        this.ativadorC == true ? this.automatizar() : null;
     }
 
     automatizar(){
@@ -48,6 +51,7 @@ class Tabuleiro{
 
     stop(){
         this.chave = false;
+        this.ativadorC = false;
     }
 
     verificarPosicoes = () => {
@@ -269,7 +273,7 @@ class Tabuleiro{
                             console.log('valorMatriz:',this.newMatriz[this.verificaEvitar[0][0]][this.verificaEvitar[0][1]])
                             console.log('Evitar:',this.evitar[0])*/
 
-                        console.log(this.verificaEvitar[0], this.evitar[0])
+                        //console.log(this.verificaEvitar[0], this.evitar[0])
                     }
                     if(this.verificaEvitar[1] != null){
                         this.evitar[1] = this.newMatriz[this.verificaEvitar[1][0]][this.verificaEvitar[1][1]]; //esquerda
@@ -292,8 +296,8 @@ class Tabuleiro{
     }
 
     moverPlayer = (matrizAtualizada, matriz) => {
-        
-        console.log('this.evitar:',this.evitar) //Consertar erro de lógica, há algum problema fazendo verificar 1 antes, algo assim
+        let aleatorio;
+
         //console.log(this.wave)
         this.verificaEvitar = [];
         //console.log("antes:",this.evitar)
@@ -305,36 +309,66 @@ class Tabuleiro{
                 null
             ]
         }
+        console.log('this.evitar:',this.evitar)
         //console.log("depois:",this.evitar)
+
+        addAleatoriedade(this);
+        function addAleatoriedade(thisRef){
+            
+            aleatorio = Math.floor(Math.random() * thisRef.evitar.length);
+            //console.log(aleatorio)
+            //console.log(thisRef.evitar[aleatorio])
+            
+            //Está indo para cima sem poder ir, há algo errado na verificação do null
+            if(thisRef.evitar[aleatorio] == null || thisRef.evitar[aleatorio] == thisRef.verde){
+                if(
+                    (thisRef.evitar[0] == thisRef.verde || thisRef.evitar[0] == null) &&
+                    (thisRef.evitar[1] == thisRef.verde || thisRef.evitar[1] == null) &&
+                    (thisRef.evitar[2] == thisRef.verde || thisRef.evitar[2] == null) &&
+                    (thisRef.evitar[3] == thisRef.verde || thisRef.evitar[3] == null)
+                ){
+                    //console.log(thisRef.evitar[0],thisRef.evitar[1],thisRef.evitar[2],thisRef.evitar[3])
+                    if(thisRef.evitar[aleatorio] == null){
+                        addAleatoriedade(thisRef);
+                    } else {
+                        return;
+                    }
+                }
+                //console.log('Mudando resultado:', aleatorio);
+                addAleatoriedade(thisRef);
+            } else {
+                return;
+            }
+        }
         
         //Para ficar em um padrão, eu posso deixar tudo igual e adicionar um valor diferente de 0 e de 1 no evitar, para o if testar as possibilidades
-        if(this.evitar[0] == this.branco){ //direita
+        if(0 == aleatorio){ //direita
             this.evitar = [null, null, null, null];
             this.contadorH++;
             this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
             console.log('R');
             this.adicionarPosicao(matriz);
-        } else if(this.evitar[1] == this.branco){ //esquerda
+        } else if(1 == aleatorio){ //esquerda
             this.evitar = [null, null, null, null];
             this.contadorH--;
             this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
             console.log('L');
             this.adicionarPosicao(matriz);
-        } else if(this.evitar[2] == this.branco){ //baixo
+        } else if(2 == aleatorio){ //baixo
             this.evitar = [null, null, null, null];
             this.contadorV++;
             this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
             console.log('D');
             this.adicionarPosicao(matriz);
-        } else if(this.evitar[3] == this.branco){ //cima
+        } else if(3 == aleatorio){ //cima
             this.evitar = [null, null, null, null];
-            this.contadorH--;
+            this.contadorV--;
             this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
             console.log('U');
             this.adicionarPosicao(matriz);
         } else { //morte
             //return;
-            console.log('nada, L');
+            console.log('nada, L',aleatorio);
             this.evitar = [null, null, null, null];
             this.contadorH--;
             this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
@@ -357,10 +391,20 @@ class Tabuleiro{
         this.h1.innerHTML = `Geração: ${this.wave}`
 
         if(this.playerPosition == this.verde){
+            console.log('wave:',this.wave);
             console.log('Game Over: ', this.playerPosition);
-            console.log('Position:',this.contadorV, this.contadorH)
+            console.log('Position:',this.contadorV, this.contadorH);
             console.log('ValorPosition',this.matriz[this.contadorV][this.contadorH]);
+            this.wave = 0;
+            this.contadorH = 0;
+            this.contadorV = 0;
+            this.playerPosition = 0;
             this.chave = false;
+            this.ativadorC = true;
+            setTimeout(() => {
+                this.criarMatriz();
+            },300);
+
             //this.verificaPosicoes(matriz);
         } else if(this.playerPosition == 4){
             console.log('Parabéns, você chegou!');
