@@ -16,7 +16,13 @@
         </div>
         <button id="automatizar" onclick="tabuleiro.automatizar()">Automatizar</button>
         <button id="stop" onclick="tabuleiro.stop()">Stop</button>
-        <button id="proximo" onclick="tabuleiro.verificarPosicoes()">Próxima geração</button>
+        <button id="proximo" onclick="tabuleiro.verificaPosicoes()">Próxima geração</button>
+        <div class="moverManualmente">
+            <button class="up" onclick="tabuleiro.up()">Cima</button>
+            <button class="left" onclick="tabuleiro.left()">Esquerda</button>
+            <button class="right" onclick="tabuleiro.right()">Direita</button>
+            <button class="down" onclick="tabuleiro.down()">baixo</button>
+        </div>
     </div>
     <!-- <button onclick="tabuleiro.verificaPosicoes()">Gerar jogo</button> -->
 </body>

@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 class Tabuleiro{
     constructor(branco, verde){
         this.branco = branco;
@@ -6,18 +8,14 @@ class Tabuleiro{
         this.wave = 0;
         this.quantidade = 0;
         this.matriz = [];
-        this.span = document.getElementById('span');
         this.newMatriz = [];
-        this.h1 = document.getElementById('geracao');
-        this.chaveC = false;
-        this.ativadorC = false;
-        this.playerPosition;
+        this.playerPosition = 3;
+        this.chave = false;
         this.aleatorio = -1; //Só testes, normal: this.aleatorio;
         //contador
         this.contadorH = 0;
         this.contadorV = 0;
         //Verificar nova geração
-        this.chave = false;
         this.contadorHV = 0;
         this.contadorVV = 0;
         this.playerPositionV = 3;
@@ -29,76 +27,39 @@ class Tabuleiro{
         //posições ruins
         this.evitar = [];
         this.verificaEvitar = [];
-        //MoverManualmente
-        this.ignorar = false;
-        this.chaveManual = false;
     }
 
-    criarMatriz = async () => {
-        this.span.innerHTML = "";
-        await fetch('http://localhost:3010/matriz')
-            .then(response => response.json())
-            .then(data => this.matriz = data)
-            .catch(error => console.error(error));
-        //console.log(this.matriz[64])
+    criarMatriz = () => {
+        /*console.log(this.contadorH, this.contadorV)
+        console.log(this.contadorHV, this.contadorVV)
+        console.log(this.evitar, this.evitarV)
+        console.log(this.matriz, this.newMatriz)
+        console.log(this.chave)
+        console.log(this.aleatorio)
+        console.log(this.playerPosition, this.playerPositionV)
+        console.log(this.verificaEvitarV, this.verificaEvitar)
+        console.log(this.verificaVezes)*/
 
-        this.matriz.forEach((valorArray, indiceArray) => {
-            /*valorArray.forEach((valor, indice) => {
-                this.span.innerHTML += this.matriz[indiceArray][indice];
-                if(indice == (this.matriz.length-1)){
-                    this.span.innerHTML += "\n";
-                }
-            })*/
-            this.span.innerHTML += this.matriz[indiceArray]+"\n";
-        })
+        const data = fs.readFileSync('padrao.txt', 'utf8');
 
-        this.h1.innerHTML = 'Geração: 0';
+        const linhas = data.split('\n');
+
+        this.matriz = Array.from({ length: linhas.length }, () => Array.from({length: 85}), () => 0);
+
+        for(let i = 0; i < linhas.length; i++){
+            const atribuirValores = linhas[i].trim().split(' ').map(Number);
+            this.matriz[i] = atribuirValores;
+        }
+
         this.newMatriz = this.matriz.slice().map(arrays => arrays.slice());
+
         this.playerPosition = this.matriz[0][0];
-        this.ativadorC == true ? this.automatizar() : null;
-    }
-
-    automatizar(){
-        this.chaveC = true;
+        this.playerPositionV = this.matriz[0][0];
+        
         this.verificaPosicoes();
     }
 
-    stop(){
-        this.chaveC = false;
-        this.ativadorC = false;
-    }
-
-    up(){
-        this.ignorar = true;
-        this.chaveManual = true;
-        this.aleatorio = 3;
-        this.verificaPosicoes();
-    }
-
-    down(){
-        this.ignorar = true;
-        this.chaveManual = true;
-        this.aleatorio = 2;
-        this.verificaPosicoes();
-    }
-
-    left(){
-        this.ignorar = true;
-        this.chaveManual = true;
-        this.aleatorio = 1;
-        this.verificaPosicoes();
-    }
-
-    right(){
-        this.ignorar = true;
-        this.chaveManual = true;
-        this.aleatorio = 0;
-        this.verificaPosicoes();
-    }
-
-    verificaPosicoes = () => {
-        this.span.innerHTML = "";
-
+    verificaPosicoes = () => { //Verificando as posições, mas sem adicionar na Matriz
         this.matriz.forEach((arrays, indiceArray) => {
             arrays.forEach((numbers, indice) => {
                 if(indiceArray == 0 && indice == 1){ //cuidando do canto superior esquerdo
@@ -110,7 +71,7 @@ class Tabuleiro{
                     ]
 
                     if (this.chave != true){
-                        if(this.contadorV == indiceArray && this.contadorH == indice){
+                        if(this.contadorV == indiceArray && this.contadorH == indice){ 
                             //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
@@ -449,11 +410,7 @@ class Tabuleiro{
                 this.quantidade = 0;
             })
         })
-        if(this.chaveManual == true){
-            this.moverPlayer();
-        } else {
-            this.escolherCaminho();
-        }
+        this.escolherCaminho();
     }
 
     escolherCaminho(){
@@ -486,10 +443,6 @@ class Tabuleiro{
                 }*/
                 //console.log(thisRef.aleatorio)
                 thisRef.aleatorio++;
-                if(thisRef.aleatorio > 3){
-                    console.log('error')
-                    this.error()
-                }
 
                 //console.log(thisRef.aleatorio)
                 //console.log(thisRef.evitar[thisRef.aleatorio])
@@ -527,7 +480,6 @@ class Tabuleiro{
                     }
 
                 } else {
-                    console.log(thisRef.aleatorio, thisRef.evitar)
                     thisRef.verificarProximaGeracao();
                 }
             }
@@ -575,8 +527,8 @@ class Tabuleiro{
         addAleatoriedade(this);
     }
 
-    verificarProximaGeracao() {//Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
-        if(this.verificaVezes == 1){ 
+    verificarProximaGeracao() {
+        if(this.verificaVezes == 1){
             this.matrizAnterior = this.matriz.slice().map(arrays => arrays.slice());
             this.newMatrizAnterior = this.newMatriz.slice().map(arrays => arrays.slice());
         }
@@ -615,65 +567,55 @@ class Tabuleiro{
     }
 
     moverPlayer = () => {
-
-        // Para arrumar as coisas
-        this.chaveManual = false;
-        this.ignorar = false;
-        //Para ficar em um padrão, eu posso deixar tudo igual e adicionar um valor diferente de 0 e de 1 no evitar, para o if testar as possibilidades
-        // Testar tirar estes nulls depois
+        
+        //console.log('resultado:',this.aleatorio);
+        
+        //console.log("depois:",this.evitar)
+        
         if(0 == this.aleatorio){ //direita
-            this.evitar = [null, null, null, null];
             this.contadorH++;
-            this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('R');
+            //console.log('R');
             this.adicionarPosicao();
         } else if(1 == this.aleatorio){ //esquerda
-            this.evitar = [null, null, null, null];
             this.contadorH--;
-            this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('L');
+            //console.log('L');
             this.adicionarPosicao();
         } else if(2 == this.aleatorio){ //baixo
-            this.evitar = [null, null, null, null];
             this.contadorV++;
-            this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('D');
+            //console.log('D');
             this.adicionarPosicao();
         } else if(3 == this.aleatorio){ //cima
-            this.evitar = [null, null, null, null];
             this.contadorV--;
-            this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('U');
+            //console.log('U');
             this.adicionarPosicao();
         } else { //morte
-            //return;
             console.log('nada, L',this.aleatorio);
             return;
-            this.evitar = [null, null, null, null];
             this.contadorH--;
-            this.playerPosition = matrizAtualizada[this.contadorV][this.contadorH];
             this.adicionarPosicao();
         }
         
+        
     }
 
-    adicionarPosicao(){
+    adicionarPosicao(){ //Adicionando na Matriz
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
-        this.matriz[this.contadorV][this.contadorH] = this.matriz[this.contadorV][this.contadorH]+"P";
-
-        this.matriz.forEach((valorArray, indiceArray) => {
-            this.span.innerHTML += valorArray+"\n";
-        })
-
-        this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
-        
-        this.wave++;
-        this.h1.innerHTML = `Geração: ${this.wave}`;
 
         this.aleatorio = -1; //Ficar de olho nisso aqui
+        this.wave++;
+        this.evitar = [null, null, null, null];
         this.evitarV = [null, null, null, null];
         this.contadorHV = this.contadorH;
         this.contadorVV = this.contadorV;
+       // console.log(this.playerPosition)
+       // console.log(this.contadorV, this.contadorH);
+        //console.log(this.matriz[0])
+        this.playerPosition = this.matriz[this.contadorV][this.contadorH];
+        this.playerPositionV = this.matriz[this.contadorV][this.contadorH];
+        console.log("Wave:",this.wave);
+        /*if(this.wave == 4){
+            return;
+        }*/
 
         if(this.playerPosition == this.verde){
             console.log('wave:',this.wave);
@@ -684,22 +626,21 @@ class Tabuleiro{
             this.contadorH = 0;
             this.contadorV = 0;
             this.playerPosition = 0;
-            this.chaveC = false;
-            this.ativadorC = true;
-            /*setTimeout(() => {
+            this.playerPositionV = 0;
+            this.contadorHV = 0;
+            this.contadorVV = 0;
+            /*this.playerPosition = 3;
+            this.playerPositionV = 3;
+            this.verificaEvitar = [];*/
+            setTimeout(() => {
                 this.criarMatriz();
-            },300);*/
+            },300);
 
             //this.verificaPosicoes(matriz);
         } else if(this.playerPosition == 4){
             console.log('Parabéns, você chegou!');
-            this.chaveC = false;
         } else {
-            if(this.chaveC == true){
-                setTimeout(() => {
-                    this.verificaPosicoes();
-                }, 300);
-            }
+            this.verificaPosicoes();
         }
     }
 }
