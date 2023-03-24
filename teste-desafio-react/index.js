@@ -12,7 +12,8 @@ class Tabuleiro{
         this.chaveC = false;
         this.ativadorC = false;
         this.playerPosition;
-        this.aleatorio = -1; //Só testes, normal: this.aleatorio;
+        //this.aleatorio = -1; //Só testes, normal: this.aleatorio;
+        this.aleatorio;
         //contador
         this.contadorH = 0;
         this.contadorV = 0;
@@ -22,16 +23,27 @@ class Tabuleiro{
         this.contadorVV = 0;
         this.playerPositionV = 3;
         this.verificaEvitarV = [];
-        this.evitarV = [];
+        this.evitarV = [null, null, null, null];
         this.matrizAnterior = [];
         this.newMatrizAnterior = [];
         this.verificaVezes = 0;
+        this.numbers = "";
         //posições ruins
-        this.evitar = [];
+        this.evitar = [null, null, null, null];;
         this.verificaEvitar = [];
         //MoverManualmente
         this.ignorar = false;
         this.chaveManual = false;
+        //SalvarGeração
+        this.caminhoVisual = "";
+        this.caminho = "";
+        this.distanciaAtual = 148;
+        this.distancia = 148;
+        this.contadorCaminho = 0;
+        this.melhorGeracao = "";
+        this.sortearNumero = 0;
+        //Testes
+        this.tentativas = 0;
     }
 
     criarMatriz = async () => {
@@ -451,6 +463,8 @@ class Tabuleiro{
         })
         if(this.chaveManual == true){
             this.moverPlayer();
+        } else if(this.contadorCaminho < ((this.melhorGeracao.length)-(this.sortearNumero))){
+            this.seguirMelhorGeracao();
         } else {
             this.escolherCaminho();
         }
@@ -470,9 +484,10 @@ class Tabuleiro{
                     null
                 ]
             }
+
             //console.log(this.aleatorio)
             function addAleatoriedade(thisRef){
-                /*thisRef.aleatorio = Math.floor(Math.random() * 10) < 2 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 2/10  (20%) de ser o 0 ou 1
+                thisRef.aleatorio = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 2/10  (20%) de ser o 0 ou 1
                 2 + Math.floor(Math.random() * 2); //50% de ser 2 ou 3 
                 //Como eu quero deixar a probabilidade de 10% para cima e esquerda e 40% para direita ou baixo, aqui está os ajustes:
                 if(thisRef.aleatorio == 1){
@@ -483,14 +498,27 @@ class Tabuleiro{
                     thisRef.aleatorio = 3;
                 } else if(thisRef.aleatorio == 2){
                     thisRef.aleatorio = 2;
-                }*/
-                //console.log(thisRef.aleatorio)
-                thisRef.aleatorio++;
-                if(thisRef.aleatorio > 3){
-                    console.log('error')
-                    this.error()
                 }
+                //console.log(thisRef.aleatorio)
+                /*//thisRef.aleatorio++;     //ARRUMAR DEPOIS
+                if(thisRef.aleatorio > 3){
+                    thisRef.aleatorio--;
+                    thisRef.evitar[thisRef.aleatorio] == null ? thisRef.aleatorio-- : null;
+                    console.log('error')
+                    thisRef.verificaVezes = 0;
+                    thisRef.chave = false;
+                    thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
+                    thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
+                    thisRef.moverPlayer();
+                }*/
 
+                if(
+                    (thisRef.numbers.indexOf(thisRef.aleatorio) == -1 && thisRef.evitar[thisRef.aleatorio] == null) ||
+                    (thisRef.numbers.indexOf(thisRef.aleatorio) == -1 && thisRef.evitar[thisRef.aleatorio] == thisRef.verde)
+                ){
+                    thisRef.numbers += thisRef.aleatorio + " "; 
+                }
+                
                 //console.log(thisRef.aleatorio)
                 //console.log(thisRef.evitar[thisRef.aleatorio])
                 
@@ -504,22 +532,12 @@ class Tabuleiro{
                     ){
                         //console.log(thisRef.evitar[0],thisRef.evitar[1],thisRef.evitar[2],thisRef.evitar[3])
                         if(thisRef.evitar[thisRef.aleatorio] == null){
-                            if(
-                                (thisRef.evitar[0] == null) &&
-                                (thisRef.evitar[1] == null) &&
-                                (thisRef.evitar[2] == null) &&
-                                (thisRef.evitar[3] == null)
-                            ){ 
-                                console.log('impossivel');
-                            } else {
-                                //console.log(thisRef.evitar);
-                                addAleatoriedade(thisRef);
-                            }
-                        } else {
+                            addAleatoriedade(thisRef);
+                        } else if(thisRef.evitar[thisRef.aleatorio] == thisRef.verde){
                             //Aqui é meio que aceitando a derrota...
-                            console.log('Não devia passar aqui...',thisRef.evitar);
-                            thisRef.verificaVezes = 0;
-                            thisRef.moverPlayer();
+                            //console.log('Não devia passar aqui...',thisRef.evitar);
+                            thisRef.chave = true;
+                            thisRef.verificarProximaGeracao();
                         }
                     } else {
                         //console.log(thisRef.aleatorio,thisRef.evitar[thisRef.aleatorio])
@@ -527,7 +545,7 @@ class Tabuleiro{
                     }
 
                 } else {
-                    console.log(thisRef.aleatorio, thisRef.evitar)
+                    //console.log(thisRef.aleatorio, thisRef.evitar);
                     thisRef.verificarProximaGeracao();
                 }
             }
@@ -549,7 +567,7 @@ class Tabuleiro{
             ]
         }
 
-        function addAleatoriedade(thisRef){
+        function addAleatoriedadeV(thisRef){
             if(
                 (thisRef.evitarV[0] == thisRef.verde || thisRef.evitarV[0] == null) &&
                 (thisRef.evitarV[1] == thisRef.verde || thisRef.evitarV[1] == null) &&
@@ -557,22 +575,37 @@ class Tabuleiro{
                 (thisRef.evitarV[3] == thisRef.verde || thisRef.evitarV[3] == null)
             ){
                 //console.log(thisRef.evitarV[0],thisRef.evitarV[1],thisRef.evitarV[2],thisRef.evitarV[3]);
-                //Precisa ser feito a tratativa, caso, nada tenha possibilidades, para não ficar me um loop infinito
-                thisRef.chave = false;
-                thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
-                thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
-                //console.log(thisRef.aleatorio,thisRef.evitar[thisRef.aleatorio], thisRef.evitarV)
-                console.log("AQUI:",thisRef.aleatorio, thisRef.evitarV)
-                thisRef.escolherCaminho();
+                if(thisRef.numbers.indexOf(thisRef.aleatorio) == -1){
+                    thisRef.numbers += thisRef.aleatorio + " ";
+                    //console.log(thisRef.aleatorio, thisRef.numbers, thisRef.numbers.length)
+                }
+        
+                if(thisRef.numbers.length == 8){
+                    if(thisRef.evitar[thisRef.aleatorio] != null){
+                        thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
+                        thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
+                        //console.log(thisRef.aleatorio, thisRef.evitarV)
+                        thisRef.verificarProximaGeracao();
+                    }
+                } else {
+                    thisRef.chave = false;
+                    thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
+                    thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
+                    thisRef.contadorHV = thisRef.contadorH;
+                    thisRef.contadorVV = thisRef.contadorV;
+                    //console.log(thisRef.aleatorio,thisRef.evitar[thisRef.aleatorio], thisRef.evitarV)
+                    //console.log("AQUI:",thisRef.aleatorio, thisRef.evitarV)
+                    thisRef.escolherCaminho();     
+                }
             } else {
                 thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
                 thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
-                console.log(thisRef.aleatorio, thisRef.evitarV)
+                //console.log(thisRef.aleatorio, thisRef.evitarV)
                 thisRef.verificarProximaGeracao();
             }
         }
         
-        addAleatoriedade(this);
+        addAleatoriedadeV(this);
     }
 
     verificarProximaGeracao() {//Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
@@ -614,9 +647,16 @@ class Tabuleiro{
         }
     }
 
-    moverPlayer = () => {
+    seguirMelhorGeracao(){
+        this.aleatorio = this.melhorGeracao[this.contadorCaminho];
+        this.contadorCaminho++;
+        this.sortearNumero = Math.floor(Math.random()*30) + 1;
+        this.moverPlayer();
+    }
 
+    moverPlayer = () => {
         // Para arrumar as coisas
+        this.numbers = "";
         this.chaveManual = false;
         this.ignorar = false;
         //Para ficar em um padrão, eu posso deixar tudo igual e adicionar um valor diferente de 0 e de 1 no evitar, para o if testar as possibilidades
@@ -625,25 +665,29 @@ class Tabuleiro{
             this.evitar = [null, null, null, null];
             this.contadorH++;
             this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('R');
+            this.caminhoVisual += "R ";
+            this.caminho += "0";
             this.adicionarPosicao();
         } else if(1 == this.aleatorio){ //esquerda
             this.evitar = [null, null, null, null];
             this.contadorH--;
             this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('L');
+            this.caminhoVisual += "L ";
+            this.caminho += "1";
             this.adicionarPosicao();
         } else if(2 == this.aleatorio){ //baixo
             this.evitar = [null, null, null, null];
             this.contadorV++;
             this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('D');
+            this.caminhoVisual += "D ";
+            this.caminho += "2";
             this.adicionarPosicao();
         } else if(3 == this.aleatorio){ //cima
             this.evitar = [null, null, null, null];
             this.contadorV--;
             this.playerPosition = this.newMatriz[this.contadorV][this.contadorH];
-            console.log('U');
+            this.caminhoVisual += "U ";
+            this.caminho += "3";
             this.adicionarPosicao();
         } else { //morte
             //return;
@@ -661,7 +705,7 @@ class Tabuleiro{
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
         this.matriz[this.contadorV][this.contadorH] = this.matriz[this.contadorV][this.contadorH]+"P";
 
-        this.matriz.forEach((valorArray, indiceArray) => {
+        this.matriz.forEach(valorArray => {
             this.span.innerHTML += valorArray+"\n";
         })
 
@@ -670,35 +714,62 @@ class Tabuleiro{
         this.wave++;
         this.h1.innerHTML = `Geração: ${this.wave}`;
 
-        this.aleatorio = -1; //Ficar de olho nisso aqui
+        //this.aleatorio = -1; //Ficar de olho nisso aqui
         this.evitarV = [null, null, null, null];
         this.contadorHV = this.contadorH;
         this.contadorVV = this.contadorV;
 
         if(this.playerPosition == this.verde){
+            this.tentativas++;
+            this.distanciaAtual = (parseInt(64) - parseInt(this.contadorV)) + (parseInt(84) - parseInt(this.contadorH));
+
+            if(this.distanciaAtual < this.distancia){
+                this.distancia = this.distanciaAtual;
+                this.melhorGeracao = this.caminho;
+            }
+            console.log("Tentativa Atual:", this.tentativas);
             console.log('wave:',this.wave);
             console.log('Game Over: ', this.playerPosition);
             console.log('Position:',this.contadorV, this.contadorH);
             console.log('ValorPosition',this.matriz[this.contadorV][this.contadorH]);
+            console.log('Caminho seguido:', this.caminhoVisual);
+            console.log("Distância restante:", this.distanciaAtual);
+            console.log("Melhor distancia:",this.distancia);
+            this.caminhoVisual = "";
+            this.caminho = "";
             this.wave = 0;
             this.contadorH = 0;
             this.contadorV = 0;
             this.playerPosition = 0;
+            this.playerPositionV = 0;
+            this.contadorHV = 0;
+            this.contadorVV = 0;
             this.chaveC = false;
             this.ativadorC = true;
-            /*setTimeout(() => {
+            this.distanciaAtual = 148;
+            this.contadorCaminho = 0;
+            setTimeout(() => {
                 this.criarMatriz();
-            },300);*/
+            },300);
 
             //this.verificaPosicoes(matriz);
         } else if(this.playerPosition == 4){
             console.log('Parabéns, você chegou!');
+            console.log('wave:',this.wave);
+            console.log('Caminho seguido:', this.caminhoVisual);
+            console.log('Player position: ', this.playerPosition);
+            console.log('Position:',this.contadorV, this.contadorH);
+            console.log("Tentativa Atual:", this.tentativas);
+            console.log("Distância restante:", this.distanciaAtual);
+            console.log("Melhor distancia:",this.distancia);
+            console.log("Caminho percorrido:", this.caminho);
+            alert("Parabéns, você conseguiu");
             this.chaveC = false;
         } else {
             if(this.chaveC == true){
                 setTimeout(() => {
                     this.verificaPosicoes();
-                }, 300);
+                }, 50);
             }
         }
     }

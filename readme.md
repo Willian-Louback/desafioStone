@@ -35,3 +35,5 @@ console.log(matriz);
     4. E, o mais complicado: Savar os dados da melhor geração e fazer a próxima geração imitar a melhor, até chegar ao resultado. 
     // Apesar deste ser o mais difícil de ser feito, ele não me garante que vai funcionar e além disso, provavelmente vai demorar bem mais do que os outros, pelo ou menos até eu ter um bom modelo de uma geração.
 */
+
+Ok, complicou, melhor eu tentar fazer ele verificar qual posição é melhor ir, ou seja, a que tiver mais casas brancas
