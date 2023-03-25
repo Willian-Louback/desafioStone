@@ -44,6 +44,7 @@ class Tabuleiro{
         this.sortearNumero = 0;
         //Testes
         this.tentativas = 0;
+        //this.melhorGeracao = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
     }
 
     criarMatriz = async () => {
@@ -487,7 +488,7 @@ class Tabuleiro{
 
             //console.log(this.aleatorio)
             function addAleatoriedade(thisRef){
-                thisRef.aleatorio = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 2/10  (20%) de ser o 0 ou 1
+                thisRef.aleatorio = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 1/10  (10%) de ser o 0 ou 1
                 2 + Math.floor(Math.random() * 2); //50% de ser 2 ou 3 
                 //Como eu quero deixar a probabilidade de 10% para cima e esquerda e 40% para direita ou baixo, aqui está os ajustes:
                 if(thisRef.aleatorio == 1){
@@ -650,7 +651,9 @@ class Tabuleiro{
     seguirMelhorGeracao(){
         this.aleatorio = this.melhorGeracao[this.contadorCaminho];
         this.contadorCaminho++;
-        this.sortearNumero = Math.floor(Math.random()*30) + 1;
+        if(this.sortearNumero == 0){
+            this.sortearNumero = Math.floor(Math.random()*40) + 1;
+        }
         this.moverPlayer();
     }
 
@@ -730,11 +733,9 @@ class Tabuleiro{
             console.log("Tentativa Atual:", this.tentativas);
             console.log('wave:',this.wave);
             console.log('Game Over: ', this.playerPosition);
-            console.log('Position:',this.contadorV, this.contadorH);
-            console.log('ValorPosition',this.matriz[this.contadorV][this.contadorH]);
-            console.log('Caminho seguido:', this.caminhoVisual);
             console.log("Distância restante:", this.distanciaAtual);
             console.log("Melhor distancia:",this.distancia);
+            console.log("Número Sorteado:", this.sortearNumero);
             this.caminhoVisual = "";
             this.caminho = "";
             this.wave = 0;
@@ -748,28 +749,31 @@ class Tabuleiro{
             this.ativadorC = true;
             this.distanciaAtual = 148;
             this.contadorCaminho = 0;
+            this.sortearNumero = 0;
             setTimeout(() => {
                 this.criarMatriz();
-            },300);
+            },50);
 
             //this.verificaPosicoes(matriz);
         } else if(this.playerPosition == 4){
             console.log('Parabéns, você chegou!');
+            console.log("Tentativa Atual:", this.tentativas);
             console.log('wave:',this.wave);
-            console.log('Caminho seguido:', this.caminhoVisual);
             console.log('Player position: ', this.playerPosition);
             console.log('Position:',this.contadorV, this.contadorH);
-            console.log("Tentativa Atual:", this.tentativas);
             console.log("Distância restante:", this.distanciaAtual);
             console.log("Melhor distancia:",this.distancia);
-            console.log("Caminho percorrido:", this.caminho);
-            alert("Parabéns, você conseguiu");
+            console.log('Caminho seguido:', this.caminhoVisual);
+            console.log("Caminho numeral:", this.caminho);
             this.chaveC = false;
+            setTimeout(() => {
+                alert("Parabéns, você conseguiu!");
+            },300); 
         } else {
             if(this.chaveC == true){
                 setTimeout(() => {
                     this.verificaPosicoes();
-                }, 50);
+                }, 20);
             }
         }
     }
