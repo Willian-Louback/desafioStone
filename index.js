@@ -2,6 +2,7 @@ const fs = require('fs');
 
 class Tabuleiro{
     constructor(branco, verde){
+        //Dados Necessários
         this.branco = branco;
         this.verde = verde;
         this.cases = [];
@@ -11,23 +12,20 @@ class Tabuleiro{
         this.newMatriz = [];
         this.playerPosition = 3;
         this.aleatorio;
-        //contador
+        this.evitar = [null, null, null, null];
+        this.verificaEvitar = [];
         this.contadorH = 0;
         this.contadorV = 0;
         //Verificar nova geração
         this.chave = false;
         this.contadorHV = 0;
         this.contadorVV = 0;
-        this.playerPositionV = 3;
         this.verificaEvitarV = [];
         this.evitarV = [null, null, null, null];
         this.matrizAnterior = [];
         this.newMatrizAnterior = [];
         this.verificaVezes = 0;
         this.numbers = "";
-        //posições ruins
-        this.evitar = [null, null, null, null];
-        this.verificaEvitar = [];
         //SalvarGeração
         this.caminhoVisual = "";
         this.caminho = "";
@@ -37,17 +35,17 @@ class Tabuleiro{
         this.melhorGeracao = "";
         this.sortearNumero = 0;
         //Testes
-        this.tentativas = 0;
+        this.tentativas = 1;
     }
 
-    criarMatriz = () => {
-        const data = fs.readFileSync('padrao.txt', 'utf8');
+    criarMatriz = () => { // Criando a matriz de acordo com o arquivo "padrao.txt"
+        const data = fs.readFileSync('padrao.txt', 'utf8'); // Lê o arquivo de texto
 
-        const linhas = data.split('\n');
+        const linhas = data.split('\n'); // Separa as linhas do arquivo
 
-        this.matriz = Array.from({ length: linhas.length }, () => Array.from({length: 85}), () => 0);
+        this.matriz = Array.from({ length: linhas.length }, () => Array.from({length: 85}), () => 0); // Cria uma matriz vazia com o tamanho especificado
 
-        for(let i = 0; i < linhas.length; i++){
+        for(let i = 0; i < linhas.length; i++){ // Preenche a matriz com os valores do arquivo
             const atribuirValores = linhas[i].trim().split(' ').map(Number);
             this.matriz[i] = atribuirValores;
         }
@@ -72,7 +70,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -82,7 +79,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -91,12 +87,8 @@ class Tabuleiro{
                             ]
                         }
                     }
-                    /*console.log(this.contadorV, indiceArray)
-                    console.log("---")
-                    console.log(this.contadorH, indice)*/
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indiceArray == 0 && indice != 0 && indice != 84){ // cuidando do topo
                     this.cases = [
                         this.matriz[indiceArray][indice+1],
@@ -108,8 +100,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -119,7 +109,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -129,8 +118,7 @@ class Tabuleiro{
                         }
                     }
 
-                    this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
+                    this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);;
                 } else if(indiceArray == 0 && indice == 84){ //cuidando do canto superior direito
                     this.cases = [
                         this.matriz[indiceArray][indice-1],
@@ -139,9 +127,7 @@ class Tabuleiro{
                     ]
 
                     if (this.chave != true){
-                        if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
+                        if(this.contadorV == indiceArray && this.contadorH == indice){
                             this.verificaEvitar = [
                                 null,
                                 [indiceArray,indice-1],
@@ -151,7 +137,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 null,
                                 [indiceArray,indice-1],
@@ -162,7 +147,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indiceArray == 64 && indice == 0){ //cuidando do canto inferior esquerdo
                     this.cases = [
                         this.matriz[indiceArray-1][indice],
@@ -172,8 +156,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                        // console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 null,
@@ -183,7 +165,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 null,
@@ -194,7 +175,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indiceArray == 64 && indice == 83){ //cuidando do canto inferior direito
                     this.cases = [
                         this.matriz[indiceArray-1][indice],
@@ -205,8 +185,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 [indiceArray][indice+1],
                                 [indiceArray][indice-1],
@@ -216,7 +194,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray][indice+1],
                                 [indiceArray][indice-1],
@@ -227,7 +204,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indiceArray == 64 && indice != 84){ //cuidando da parte de baixo
                     this.cases = [
                         this.matriz[indiceArray-1][indice],
@@ -239,8 +215,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -250,7 +224,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -261,7 +234,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indice == 0 && indiceArray != 0){ //cuidando do canto esquerdo
                     this.cases = [
                         this.matriz[indiceArray-1][indice],
@@ -273,8 +245,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 null,
@@ -284,8 +254,7 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-                            this.verificaEvitarV = [
+                           this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 null,
                                 [indiceArray+1,indice],
@@ -295,7 +264,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indice == 84 && indiceArray != 64){ //cuidando do canto direito
                     this.cases = [
                         this.matriz[indiceArray-1][indice],
@@ -307,8 +275,6 @@ class Tabuleiro{
 
                     if (this.chave != true){
                         if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
                             this.verificaEvitar = [
                                 null,
                                 [indiceArray,indice-1],
@@ -318,7 +284,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 null,
                                 [indiceArray,indice-1],
@@ -329,7 +294,6 @@ class Tabuleiro{
                     }
 
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
-                    //console.log(this.quantidade);
                 } else if(indiceArray != 0 && indiceArray != 64 && indice != 0 && indice != 84){ //restante (Arrumar depois, acho que posso remover algumas condições)
                     this.cases = [
                         this.matriz[indiceArray][indice+1],
@@ -343,9 +307,7 @@ class Tabuleiro{
                     ]
 
                     if (this.chave != true){
-                        if(this.contadorV == indiceArray && this.contadorH == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
-
+                        if(this.contadorV == indiceArray && this.contadorH == indice){
                             this.verificaEvitar = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -355,7 +317,6 @@ class Tabuleiro{
                         }
                     } else {
                         if(this.contadorVV == indiceArray && this.contadorHV == indice){ 
-                            //console.log('passou\n playerArray:',this.contadorV,'array:',indiceArray,'\nplayerIndice:',this.contadorH,'indice:',indice);
                             this.verificaEvitarV = [
                                 [indiceArray,indice+1],
                                 [indiceArray,indice-1],
@@ -368,13 +329,13 @@ class Tabuleiro{
                     this.cases.forEach(cases => cases == this.verde ? this.quantidade++ : null);
                 }
 
-                if(this.matriz[indiceArray][indice] == this.branco){ //Conferindo se é branco ou verde
+                if(this.matriz[indiceArray][indice] == this.branco){ //Conferindo se é branco ou verde e adicionando na newMatriz
                     this.quantidade > 1 && this.quantidade < 5 ? this.newMatriz[indiceArray][indice] = this.verde : null;
                 } else if(this.matriz[indiceArray][indice] == this.verde){
                     this.quantidade > 3 && this.quantidade < 6 ? null : this.newMatriz[indiceArray][indice] = this.branco;
                 }
                 
-                if(this.chave != true){
+                if(this.chave != true){ // Passando pela primeira vez e adicionando os possíveis lances
                     if(indiceArray == 64 && indice == 84){
                         if(this.verificaEvitar[0] != null){
                             this.evitar[0] = this.newMatriz[this.verificaEvitar[0][0]][this.verificaEvitar[0][1]]; //direita
@@ -389,7 +350,7 @@ class Tabuleiro{
                             this.evitar[3] = this.newMatriz[this.verificaEvitar[3][0]][this.verificaEvitar[3][1]]; //cima
                         }
                     }
-                } else {
+                } else { // Aqui irá passar após ativar a chave no método "verificarProximageracao()", fazendo o algoritmo genético visualizar mais gerações à frente
                     if(indiceArray == 64 && indice == 84){
                         if(this.verificaEvitarV[0] != null){
                             this.evitarV[0] = this.newMatriz[this.verificaEvitarV[0][0]][this.verificaEvitarV[0][1]]; //direita
@@ -410,6 +371,7 @@ class Tabuleiro{
                 this.quantidade = 0;
             })
         })
+        // Caso exista uma melhor geração, ele irá imitar os lances dela, e parar de acordo com o número gerado aleatoriamente, assim voltando a procurar lances novos
         if(this.contadorCaminho < ((this.melhorGeracao.length)-(this.sortearNumero))){
             this.seguirMelhorGeracao();
         } else {
@@ -417,12 +379,11 @@ class Tabuleiro{
         }
     }
 
-    escolherCaminho(){
+    escolherCaminho(){ // Vai passar aqui para escolher o caminho, caso já tenha passado, vai pular para o escolherCaminho2()
         this.verificaVezes++;
 
         if(this.chave == false){
             this.verificaEvitar = [];
-            //console.log("antes:",this.evitar)
             if(this.contadorV == 0 && this.contadorH == 0){
                 this.evitar = [
                     this.newMatriz[0][1],
@@ -432,32 +393,19 @@ class Tabuleiro{
                 ]
             }
 
-            //console.log(this.aleatorio)
             function addAleatoriedade(thisRef){
-                thisRef.aleatorio = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 1/10  (10%) de ser o 0 ou 1
+                thisRef.aleatorio = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma probabilidade de 1/10 (10%) de ser 0 ou 1
                 2 + Math.floor(Math.random() * 2); //50% de ser 2 ou 3 
-                //Como eu quero deixar a probabilidade de 10% para cima e esquerda e 40% para direita ou baixo, aqui está os ajustes:
-                if(thisRef.aleatorio == 1){
+                //Como eu quero deixar a probabilidade de 5% para cima e esquerda e 45% para direita ou baixo, aqui está os ajustes:
+                if(thisRef.aleatorio == 1){ // esquerda para esquerda
                     thisRef.aleatorio = 1;
-                } else if(thisRef.aleatorio == 3){
+                } else if(thisRef.aleatorio == 3){ // cima para direita
                     thisRef.aleatorio = 0;
-                } else if(thisRef.aleatorio == 0){
+                } else if(thisRef.aleatorio == 0){ // direita para cima
                     thisRef.aleatorio = 3;
-                } else if(thisRef.aleatorio == 2){
+                } else if(thisRef.aleatorio == 2){ // baixo para baixo
                     thisRef.aleatorio = 2;
                 }
-                //console.log(thisRef.aleatorio)
-                /*//thisRef.aleatorio++;     //ARRUMAR DEPOIS
-                if(thisRef.aleatorio > 3){
-                    thisRef.aleatorio--;
-                    thisRef.evitar[thisRef.aleatorio] == null ? thisRef.aleatorio-- : null;
-                    console.log('error')
-                    thisRef.verificaVezes = 0;
-                    thisRef.chave = false;
-                    thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
-                    thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
-                    thisRef.moverPlayer();
-                }*/
 
                 if(
                     (thisRef.numbers.indexOf(thisRef.aleatorio) == -1 && thisRef.evitar[thisRef.aleatorio] == null) ||
@@ -466,10 +414,6 @@ class Tabuleiro{
                     thisRef.numbers += thisRef.aleatorio + " "; 
                 }
                 
-                //console.log(thisRef.aleatorio)
-                //console.log(thisRef.evitar[thisRef.aleatorio])
-                
-                //Está indo para cima sem poder ir, há algo errado na verificação do null
                 if(thisRef.evitar[thisRef.aleatorio] == null || thisRef.evitar[thisRef.aleatorio] == thisRef.verde){
                     if(
                         (thisRef.evitar[0] == thisRef.verde || thisRef.evitar[0] == null) &&
@@ -477,22 +421,17 @@ class Tabuleiro{
                         (thisRef.evitar[2] == thisRef.verde || thisRef.evitar[2] == null) &&
                         (thisRef.evitar[3] == thisRef.verde || thisRef.evitar[3] == null)
                     ){
-                        //console.log(thisRef.evitar[0],thisRef.evitar[1],thisRef.evitar[2],thisRef.evitar[3])
                         if(thisRef.evitar[thisRef.aleatorio] == null){
                             addAleatoriedade(thisRef);
                         } else if(thisRef.evitar[thisRef.aleatorio] == thisRef.verde){
-                            //Aqui é meio que aceitando a derrota...
-                            //console.log('Não devia passar aqui...',thisRef.evitar);
                             thisRef.chave = true;
                             thisRef.verificarProximaGeracao();
                         }
                     } else {
-                        //console.log(thisRef.aleatorio,thisRef.evitar[thisRef.aleatorio])
                         addAleatoriedade(thisRef);
                     }
 
                 } else {
-                    //console.log(thisRef.aleatorio, thisRef.evitar);
                     thisRef.verificarProximaGeracao();
                 }
             }
@@ -502,7 +441,7 @@ class Tabuleiro{
         }      
     }
 
-    escolherCaminho2(){
+    escolherCaminho2(){ // Verificando os caminhos da próxima geração
         this.verificaEvitarV = [];
 
         if(this.contadorVV == 0 && this.contadorHV == 0){
@@ -521,17 +460,14 @@ class Tabuleiro{
                 (thisRef.evitarV[2] == thisRef.verde || thisRef.evitarV[2] == null) &&
                 (thisRef.evitarV[3] == thisRef.verde || thisRef.evitarV[3] == null)
             ){
-                //console.log(thisRef.evitarV[0],thisRef.evitarV[1],thisRef.evitarV[2],thisRef.evitarV[3]);
                 if(thisRef.numbers.indexOf(thisRef.aleatorio) == -1){
                     thisRef.numbers += thisRef.aleatorio + " ";
-                    //console.log(thisRef.aleatorio, thisRef.numbers, thisRef.numbers.length)
                 }
         
                 if(thisRef.numbers.length == 8){
                     if(thisRef.evitar[thisRef.aleatorio] != null){
                         thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
                         thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
-                        //console.log(thisRef.aleatorio, thisRef.evitarV)
                         thisRef.verificarProximaGeracao();
                     }
                 } else {
@@ -540,14 +476,11 @@ class Tabuleiro{
                     thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
                     thisRef.contadorHV = thisRef.contadorH;
                     thisRef.contadorVV = thisRef.contadorV;
-                    //console.log(thisRef.aleatorio,thisRef.evitar[thisRef.aleatorio], thisRef.evitarV)
-                    //console.log("AQUI:",thisRef.aleatorio, thisRef.evitarV)
                     thisRef.escolherCaminho();     
                 }
             } else {
                 thisRef.matriz = thisRef.matrizAnterior.slice().map(arrays => arrays.slice());
                 thisRef.newMatriz = thisRef.newMatrizAnterior.slice().map(arrays => arrays.slice());
-                //console.log(thisRef.aleatorio, thisRef.evitarV)
                 thisRef.verificarProximaGeracao();
             }
         }
@@ -555,46 +488,39 @@ class Tabuleiro{
         addAleatoriedadeV(this);
     }
 
-    verificarProximaGeracao() {//Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
+    verificarProximaGeracao() { // Aqui irá voltar para o verificaPosicoes() ou irá permitir o avanço ao moverPlayer()
         if(this.verificaVezes == 1){ 
             this.matrizAnterior = this.matriz.slice().map(arrays => arrays.slice());
             this.newMatrizAnterior = this.newMatriz.slice().map(arrays => arrays.slice());
         }
 
-        if(this.chave == false){
+        if(this.chave == false){ // Voltando para verificar a próxima geração
             this.chave = true;
             this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
-            //this.playerPositionV = matriz[this.contadorVV][this.contadorHV];
             if(0 == this.aleatorio){ //direita
                 this.contadorHV++;
-                //console.log('R');
                 this.verificaPosicoes();
             } else if(1 == this.aleatorio){ //esquerda
                 this.contadorHV--;
-                //console.log('L');
                 this.verificaPosicoes();
             } else if(2 == this.aleatorio){ //baixo
                 this.contadorVV++;
-                //console.log('D');
                 this.verificaPosicoes();
             } else if(3 == this.aleatorio){ //cima
                 this.contadorVV--;
-                //console.log('U');
                 this.verificaPosicoes();
-            } else { //morte
-                console.log('nada, L',this.aleatorio);
+            } else { // Apenas para desenvolvimento
+                console.log("Isso é impossível de acontecer!");
                 return;
-                this.contadorHV--;
-                this.verificaPosicoes();
             }
-        } else {
+        } else { // Avançando
             this.verificaVezes = 0;
             this.chave = false;
             this.moverPlayer();
         }
     }
 
-    seguirMelhorGeracao(){
+    seguirMelhorGeracao(){ // Vai seguir a melhor geração até um certo ponto
         this.aleatorio = this.melhorGeracao[this.contadorCaminho];
         this.contadorCaminho++;
         if(this.sortearNumero == 0){
@@ -603,7 +529,7 @@ class Tabuleiro{
         this.moverPlayer();
     }
 
-    moverPlayer = () => {
+    moverPlayer = () => { // Movendo o player
         // Para arrumar as coisas
         this.numbers = "";
 
@@ -627,11 +553,9 @@ class Tabuleiro{
             this.caminhoVisual += "U ";
             this.caminho += "3";
             this.adicionarPosicao();
-        } else { //morte
-            console.log('nada, L',this.aleatorio);
+        } else { // Apenas para desenvolvimento
+            console.log("Isso é impossível de acontecer!");
             return;
-            this.contadorH--;
-            this.adicionarPosicao();
         }
     }
 
@@ -653,9 +577,9 @@ class Tabuleiro{
                 this.distancia = this.distanciaAtual;
                 this.melhorGeracao = this.caminho;
             }
+            console.log('Game Over: ', this.playerPosition);
             console.log("Tentativa Atual:", this.tentativas);
             console.log('wave:',this.wave);
-            console.log('Game Over: ', this.playerPosition);
             console.log("Distância restante:", this.distanciaAtual);
             console.log("Melhor distancia:",this.distancia);
             console.log("Número Sorteado:", this.sortearNumero);
@@ -664,8 +588,7 @@ class Tabuleiro{
             this.wave = 0;
             this.contadorH = 0;
             this.contadorV = 0;
-            this.playerPosition = 0;
-            this.playerPositionV = 0;
+            this.playerPosition = 3;
             this.contadorHV = 0;
             this.contadorVV = 0;
             this.distanciaAtual = 148;
@@ -674,22 +597,23 @@ class Tabuleiro{
             setTimeout(() => {
                 this.criarMatriz();
             },50);
-
-            //this.verificaPosicoes(matriz);
         } else if(this.playerPosition == 4){
+            this.tentativas++;
+            this.distanciaAtual = (parseInt(64) - parseInt(this.contadorV)) + (parseInt(84) - parseInt(this.contadorH));
+
             console.log('Parabéns, você chegou!');
             console.log("Tentativa Atual:", this.tentativas);
             console.log('wave:',this.wave);
             console.log('Player position: ', this.playerPosition);
             console.log('Position:',this.contadorV, this.contadorH);
-            console.log("Distância restante:", this.distanciaAtual);
-            console.log("Melhor distancia:",this.distancia);
+            console.log("Distância anterior:", this.distancia);
+            console.log("Distância:",this.distanciaAtual);
             console.log('Caminho seguido:', this.caminhoVisual);
             console.log("Caminho numeral:", this.caminho);
         } else {
             //setTimeout(() => {
                 this.verificaPosicoes();
-            //}, 30)
+            //}, 1)
         }
     }
 }

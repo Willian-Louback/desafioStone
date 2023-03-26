@@ -1,39 +1,14 @@
-Qualquer coisa eu devo testar com menos casas;
+Olá, o algoritmo principal está nesta pasta. Já o feedback com interface gráfica está na pasta "testDesafio".
 
-const fs = require('fs');
+arquivos importante:
+  index.js: código completo;
+  padrao.txt: como começa a matriz;
+  converte.js: convertendo a resposta de letras para números; (só para testes)
+  server.js: iniciando uma api para poder pegar os valores da matriz;
 
-// Lê o arquivo de texto
-const data = fs.readFileSync('arquivo.txt', 'utf8');
-
-// Separa as linhas do arquivo
-const linhas = data.split('\n');
-
-// Cria uma matriz vazia com o tamanho especificado
-const matriz = Array.from({length: linhas.length}, () => 
-                   Array.from({length: 85}, () => 0));
-
-// Preenche a matriz com os valores do arquivo
-for (let i = 0; i < linhas.length; i++) {
-  const valores = linhas[i].trim().split(' ').map(Number);
-  matriz[i] = valores;
-}
-
-// Exibe a matriz no console
-console.log(matriz);
-
-/*
-  Eu tenho algumas opções:
-    1. Deixar o meu algoritmo genético vizualizar uma geração a mais. 
-    // Este vai dar um trabalho, mas é quase garantido que o Player vai chegar ao destino, porém, vai precisar da etapa 2 ou da etapa 3 para funcionar corretamente.
-
-    2. Aumentar a % da aleatoriedade para a direita e para baixo. 
-    // Este é o mais simples de ser feito, então vou tentar ele primeiro.
-
-    3. calcular a distância do player até a casa "4". Para o algoritmo tentar fazer o movimento que é mais próximo a casa "4".
-    // Este pode ser bem útil, mas precisa de trabalhar junto com a aleatoriedade, pois há chances de ficar repetindo a mesma posição.
-
-    4. E, o mais complicado: Savar os dados da melhor geração e fazer a próxima geração imitar a melhor, até chegar ao resultado. 
-    // Apesar deste ser o mais difícil de ser feito, ele não me garante que vai funcionar e além disso, provavelmente vai demorar bem mais do que os outros, pelo ou menos até eu ter um bom modelo de uma geração.
-*/
-
-Ok, complicou, melhor eu tentar fazer ele verificar qual posição é melhor ir, ou seja, a que tiver mais casas brancas
+Resposta:
+  wave: 292
+  Player position: 4
+  Position: 64 84
+  Caminho seguido: R R D D D R D D D R D R D D R R D L R R L R R R D L D D U R D D R D L D U L R U D R D R D R D R R D L D D R D R R L U R U L D U L R R L D R R D R R R D L D R D R U D D U R R D U R R L D R D D R R R D D R U D D U D U U D D R L R R R R R L R R L R R R D D R D L U U D D D D R R L L R L R R R D L U D D R R R D U D D R D L U D R R D D R D R R U D L D L R R R U R R R R D R L R R U D L R R D R U D R U R D D D R D D D D R R R R D D R D D U U L R U L L L R R R R D R U L U R U U D L U R U R R R R D R U R D R R D L U D D L R R D U R D D D D R D D U R D D D D R U U R R R D L D R D D D R R 
+  Caminho numeral: 0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200
