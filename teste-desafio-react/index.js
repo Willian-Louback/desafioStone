@@ -11,7 +11,7 @@ class Tabuleiro{
         this.h1 = document.getElementById('geracao');
         this.chaveC = false;
         this.ativadorC = false;
-        this.playerPosition;
+        this.playerPosition = 3;
         //this.aleatorio = -1; //Só testes, normal: this.aleatorio;
         this.aleatorio;
         //contador
@@ -29,7 +29,7 @@ class Tabuleiro{
         this.verificaVezes = 0;
         this.numbers = "";
         //posições ruins
-        this.evitar = [null, null, null, null];;
+        this.evitar = [null, null, null, null];
         this.verificaEvitar = [];
         //MoverManualmente
         this.ignorar = false;
@@ -44,6 +44,8 @@ class Tabuleiro{
         this.sortearNumero = 0;
         //Testes
         this.tentativas = 0;
+        //this.melhorGeracao = "23020202023320220002020222001112221320220020202002122200013031231001131320003020220320000222112122020220000020002300001001002122113303202122120301322220000002020200220020320323202222002001230300220102202033020020020232332311122130201111312101202300302120110232000102021100332132312101000011300110112122123222000000100001100100030000002000030002";
+        // A melhor até agora:
         //this.melhorGeracao = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
     }
 
