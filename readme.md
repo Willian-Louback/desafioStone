@@ -1,4 +1,4 @@
-Olá, o algoritmo principal está nesta pasta. Já o feedback com interface gráfica está na pasta "testDesafio".
+Olá, o algoritmo principal está no diretório raiz. Já o feedback com interface gráfica está no subdiretório "testDesafio".
 
 arquivos importante:
   index.js: código completo;
