@@ -53,7 +53,7 @@ class Tabuleiro{
         this.newMatriz = this.matriz.slice().map(arrays => arrays.slice());
 
         this.playerPosition = this.matriz[0][0];
-        
+
         this.verificaPosicoes();
     }
 
@@ -599,7 +599,7 @@ class Tabuleiro{
             },50);
         } else if(this.playerPosition == 4){
             this.tentativas++;
-            this.distanciaAtual = (parseInt(64) - parseInt(this.contadorV)) + (parseInt(84) - parseInt(this.contadorH));
+            this.distanciaAtual = ((this.matriz.length - 1) - parseInt(this.contadorV)) + ((this.matriz[0].length - 1) - parseInt(this.contadorH));
 
             console.log('Parabéns, você chegou!');
             console.log("Tentativa Atual:", this.tentativas);
