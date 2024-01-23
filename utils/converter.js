@@ -11,7 +11,7 @@ const resultado = removeEspaco.map(valor => {
         return 1;
     } else if(valor == "D"){
         return 2;
-    } else if(valor = "U"){
+    } else if(valor == "U"){
         return 3;
     }
 }).join("");

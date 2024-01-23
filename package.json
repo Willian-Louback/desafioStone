@@ -2,5 +2,18 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2"
-  }
+  },
+  "name": "algoritmgenetic",
+  "description": "Olá, o algoritmo principal está no diretório raiz. Já o feedback com interface gráfica está no subdiretório \"testDesafio\".",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./server/server.js"
+  },
+  "author": "",
+  "license": "ISC"
 }
