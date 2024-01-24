@@ -9,6 +9,7 @@ class Board{
         this.playerPosition = [ 0, 0 ];
         this.wave = 0;
         this.valuePossibleMovement = [null, null, null, null];
+        this.attempts = 1;
 
 
         this.chaveC = false;
@@ -39,7 +40,6 @@ class Board{
         this.melhorGeracao = "";
         this.sortearNumero = 0;
         //Testes
-        this.tentativas = 1;
         //this.melhorGeracao = "22012022212000232222222300302320001023220020230300300012302023202020020230332202203222222311220312231232310003131300223110010320223220202102032010302000333202120301221021313211203112020332221313302102030200222222002001320110202022120022333202000230231112201110022202103212220230200000203022202003201120302020232110000000001101000000000113000021003300020330220002";
         // A melhor até agora:
         //this.melhorGeracao = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
@@ -327,23 +327,82 @@ class Board{
             return;
         }
 
+        this.player = this.newMatriz[this.playerPosition[1]][this.playerPosition[0]];
         this.addMove();
     }
 
     addMove() {
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
-        this.matriz[this.playerPosition[1]][this.playerPosition[0]] = this.matriz[this.playerPosition[1]][this.playerPosition[0]]+"P";
+        this.matriz[this.playerPosition[1]][this.playerPosition[0]] = this.matriz[this.playerPosition[1]][this.playerPosition[0]] + "P"; // essa parte precisa de otimização
 
         document.querySelector("#matriz").innerText = ``;
 
         this.matriz.forEach(value => {
-            document.querySelector("#matriz").innerText += `${value} \n`;
+            document.querySelector("#matriz").innerText += `${value.join(" ")}\n`;
         });
 
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
 
         this.wave++;
         document.querySelector(`#generation`).innerText = `Geração: ${this.wave}`;
+
+        if(this.player == 1){
+            this.attempts++;
+            // this.distanciaAtual = (parseInt(64) - parseInt(this.playerPosition[1])) + (parseInt(84) - parseInt(this.playerPosition[0]));
+
+            // if(this.distanciaAtual < this.distancia){
+            //     this.distancia = this.distanciaAtual;
+            //     this.melhorGeracao = this.caminho;
+            // }
+
+            console.log("Tentativa Atual:", this.attempts);
+            console.log("wave:", this.wave);
+            console.log("Game Over: ", this.player);
+            // console.log("Distância restante:", this.distanciaAtual);
+            // console.log("Melhor distancia:", this.distancia);
+            // console.log("Número Sorteado:", this.sortearNumero);
+            // this.caminhoVisual = "";
+            // this.caminho = "";
+            // this.playerPositionV = 0;
+            // this.contadorHV = 0;
+            // this.contadorVV = 0;
+            // this.chaveC = false;
+            // this.ativadorC = true;
+            // this.distanciaAtual = 148;
+            // this.contadorCaminho = 0;
+            // this.sortearNumero = 0;
+            this.wave = 0;
+            this.playerPosition[0] = 0;
+            this.playerPosition[1] = 0;
+            this.player = 3;
+
+            setTimeout(() => {
+                // calculateMatriz();
+                console.log("morte");
+            }, 50);
+        } else if(this.player == 4){
+            console.log("Parabéns, você chegou!");
+            console.log("Tentativa Atual:", this.attempts);
+            console.log("wave:", this.wave);
+            console.log("Player position: ", this.player);
+            console.log("Position:", this.playerPosition[1], this.playerPosition[0]);
+            // console.log("Distância restante:", this.distanciaAtual);
+            // console.log("Melhor distancia:",this.distancia);
+            // console.log("Caminho seguido:", this.caminhoVisual);
+            // console.log("Caminho numeral:", this.caminho);
+            // this.chaveC = false;
+
+            setTimeout(() => {
+                alert("Parabéns, você conseguiu!");
+            }, 300);
+        } else {
+            setTimeout(async () => {
+                const { newMatriz, valuePossibleMovement } = await calculateMatriz(this.matriz, this.playerPosition, this.valuePossibleMovement);
+
+                this.newMatriz = newMatriz;
+                this.valuePossibleMovement = valuePossibleMovement;
+            }, 120);
+        }
 
         //this.aleatorio = -1; //Ficar de olho nisso aqui
         // this.evitarV = [null, null, null, null];

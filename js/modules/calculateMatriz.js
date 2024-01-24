@@ -8,7 +8,7 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
 
         matriz.forEach((arrays, indexArray) => {
             arrays.forEach((_value, index) => {
-                if(indexArray == 0 && index == 0){ //cuidando do canto superior esquerdo
+                if(indexArray == 0 && index == 1){ //cuidando do canto superior esquerdo
                     cases = [
                         matriz[indexArray][index + 1],
                         matriz[indexArray + 1][index],
@@ -134,7 +134,7 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                     // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
-                } else if(indexArray == 64 && index == 84){ //cuidando do canto inferior direito
+                } else if(indexArray == 64 && index == 83){ //cuidando do canto inferior direito
                     cases = [
                         matriz[indexArray - 1][index],
                         matriz[indexArray - 1][index - 1],
@@ -262,7 +262,7 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                     // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
-                } else { //restante
+                } else if((indexArray != 0 && index != 0) && (indexArray != 64 && index != 84)){ //restante
                     cases = [
                         matriz[indexArray][index + 1],
                         matriz[indexArray][index - 1],
@@ -311,7 +311,7 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
 
                 if(matriz[indexArray][index] == 0){ //Conferindo se é branco ou verde e aplicando a configuração de disseminação das células
                     quantityDangerous > 1 && quantityDangerous < 5 ? newMatriz[indexArray][index] = 1 : null;
-                } else {
+                } else if(matriz[indexArray][index] == 1){
                     quantityDangerous > 3 && quantityDangerous < 6 ? null : newMatriz[indexArray][index] = 0;
                 }
 
