@@ -21,7 +21,7 @@ class Ia {
             }
 
             const drawNumber = () => {
-                this.drawnNumber = Math.floor(Math.random() * 10) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 1/10  (10%) de ser o 0 ou 1
+                this.drawnNumber = Math.floor(Math.random() * 7) < 1 ? Math.floor(Math.random() * 2) : //Vai deixar uma possibilidade de 1/10  (10%) de ser o 0 ou 1
                     2 + Math.floor(Math.random() * 2); //50% de ser 2 ou 3
 
                 //Como eu quero deixar a probabilidade de 10% para cima e esquerda e 40% para direita ou baixo, aqui está os ajustes:
@@ -84,7 +84,7 @@ class Ia {
                 if(bestGeneration.length > 40) {
                     this.numberToFollow = Math.floor(Math.random() * 40) + 1;
                 } else {
-                    this.numberToFollow = Math.floor(Math.random() * (bestGeneration.length - 1)) + 1;
+                    this.numberToFollow = Math.floor(Math.random() * (bestGeneration.length - 1));
                 }
             }
 

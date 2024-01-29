@@ -48,7 +48,7 @@ class Board{
     async automate(){
         this.automateKey = true;
 
-        if(!this.bestGeneration || this.numberToFollow < this.wave) {
+        if(!this.bestGeneration || this.wave > (this.bestGeneration.length - this.numberToFollow)) {
             this.drawnNumber = await this.Ia.choosePath(this.playerPosition, this.valuePossibleMovement, this.matriz, this.newMatriz);
         } else {
             const { drawnNumber, numberToFollow } = await this.Ia.followBetterGeneration(this.bestGeneration, this.pathCounter);
@@ -155,9 +155,10 @@ class Board{
             console.log("wave:", this.wave);
             console.log("Game Over: ", this.player);
             console.log("Distância restante:", this.currentDistance);
-            console.log("Melhor distance:", this.distance);
+            console.log("Melhor distância:", this.distance);
+            console.log("Geração atual:", this.path);
             console.log("Melhor geração: ", this.bestGeneration);
-            // console.log("Número Sorteado:", this.sortearNumero);
+            console.log("Número Sorteado:", this.numberToFollow);
             // this.pathVisual = "";
             this.currentDistance = 148;
             this.path = "";
