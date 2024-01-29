@@ -163,6 +163,39 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                     // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
+                } else if(indexArray == 64 && index != 84){ //cuidando da parte de baixo
+                    cases = [
+                        matriz[indexArray - 1][index],
+                        matriz[indexArray - 1][index - 1],
+                        matriz[indexArray - 1][index + 1],
+                        matriz[indexArray][index - 1],
+                        matriz[indexArray][index + 1]
+                    ];
+
+                    // if (this.chave != true){
+                    //     if(this.contadorV == indexArray && this.contadorH == index){
+                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
+
+                    //         this.verificaEvitar = [
+                    //             [indexArray,index+1],
+                    //             [indexArray,index-1],
+                    //             null,
+                    //             [indexArray-1,index]
+                    //         ];
+                    //     }
+                    // } else {
+                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
+                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
+                    //         this.verificaEvitarV = [
+                    //             [indexArray,index+1],
+                    //             [indexArray,index-1],
+                    //             null,
+                    //             [indexArray-1,index]
+                    //         ];
+                    //     }
+                    // }
+
+                    cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray != 0 && index == 0){ //cuidando do canto esquerdo
                     cases = [
                         matriz[indexArray - 1][index],
@@ -229,39 +262,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                     // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
-                } else if(indexArray == 64 && index != 84){ //cuidando da parte de baixo
-                    cases = [
-                        matriz[indexArray - 1][index],
-                        matriz[indexArray - 1][index - 1],
-                        matriz[indexArray - 1][index + 1],
-                        matriz[indexArray][index - 1],
-                        matriz[indexArray][index + 1]
-                    ];
-
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
-
-                    cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if((indexArray != 0 && index != 0) && (indexArray != 64 && index != 84)){ //restante
                     cases = [
                         matriz[indexArray][index + 1],
@@ -318,16 +318,16 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                 // if(this.chave != true){
                 if(indexArray == 64 && index == 84){
                     if(possibleMoves[0] != null){
-                        valuePossibleMovement[0] = newMatriz[possibleMoves[0][0]][possibleMoves[0][1]]; //direita
+                        valuePossibleMovement[0] = parseInt(newMatriz[possibleMoves[0][0]][possibleMoves[0][1]]); //direita
                     }
                     if(possibleMoves[1] != null){
-                        valuePossibleMovement[1] = newMatriz[possibleMoves[1][0]][possibleMoves[1][1]]; //esquerda
+                        valuePossibleMovement[1] =  parseInt(newMatriz[possibleMoves[1][0]][possibleMoves[1][1]]); //esquerda
                     }
                     if(possibleMoves[2] != null){
-                        valuePossibleMovement[2] = newMatriz[possibleMoves[2][0]][possibleMoves[2][1]]; //baixo
+                        valuePossibleMovement[2] =  parseInt(newMatriz[possibleMoves[2][0]][possibleMoves[2][1]]); //baixo
                     }
                     if(possibleMoves[3] != null){
-                        valuePossibleMovement[3] = newMatriz[possibleMoves[3][0]][possibleMoves[3][1]]; //cima
+                        valuePossibleMovement[3] =  parseInt(newMatriz[possibleMoves[3][0]][possibleMoves[3][1]]); //cima
                     }
 
                     resolve({
