@@ -11,10 +11,8 @@ class Ia {
         this.bestGeneration = "";
         this.distance = 148;
         this.currentDistance = 148;
-        this.onlyFollow = false;
+        this.onlyFollow = true;
 
-        //Testes
-        // this.bestGeneration = "023212220300020222102022300320222210220302202300222230023202120231103002032200202322300231002202000120000000300003120221002112203101030032230320010302203003220112103010002200122013220312023222202200322212221200200102333001010221122020320320002002202020220231021300202212100323020110312101003210100132110011323213020103000000";
         // A melhor até agora:
         // this.bestGeneration = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
     }
@@ -92,13 +90,13 @@ class Ia {
             this.drawnNumber = parseInt(this.bestGeneration[this.pathCounter]);
 
             if(this.numberToFollow == 0){
-                if(Math.floor(Math.random() * 2) == 0) {
-                    console.log("40");
-                    this.numberToFollow = Math.floor(Math.random() * 60) + 1;
-                } else {
-                    console.log("length");
-                    this.numberToFollow = Math.floor(Math.random() * (this.bestGeneration.length - 1));
-                }
+                // if(Math.floor(Math.random() * 2) == 0) {
+                // console.log("40");
+                this.numberToFollow = Math.floor(Math.random() * 40) + 1;
+                // } else {
+                //     console.log("length");
+                //     this.numberToFollow = Math.floor(Math.random() * (this.bestGeneration.length - 1));
+                // }
             }
 
             this.pathCounter++;

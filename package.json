@@ -4,9 +4,10 @@
     "express": "^4.18.2"
   },
   "name": "algoritmgenetic",
-  "description": "Olá, o algoritmo principal está no diretório raiz. Já o feedback com interface gráfica está no subdiretório \"testDesafio\".",
+  "description": "",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "devDependencies": {
     "eslint": "^8.56.0"
   },

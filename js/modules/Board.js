@@ -1,8 +1,9 @@
 import generateMatriz from "./generateMatriz.js";
 import calculateMatriz from "./calculateMatriz.js";
+import Draw from "./Draw.js";
 import Ia from "./Ia.js";
 
-class Board{
+class Board {
     constructor(){
         this.matriz;
         this.newMatriz;
@@ -15,6 +16,7 @@ class Board{
         this.automateKey = false;
         this.numberToFollow = 0;
         this.Ia = new Ia();
+        this.Draw = new Draw();
     }
 
     async init() {
@@ -100,21 +102,14 @@ class Board{
 
     addMove() {
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
-        this.matriz[this.playerPosition[1]][this.playerPosition[0]] = this.matriz[this.playerPosition[1]][this.playerPosition[0]] + "P"; // essa parte precisa de otimização
 
-        document.querySelector("#matriz").innerText = ``;
-
-        this.matriz.forEach(value => {
-            document.querySelector("#matriz").innerText += `${value.join(" ")}\n`;
-        });
-
-        this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
+        this.Draw.draw(this.matriz, this.playerPosition);
 
         this.valuePossibleMovement = [ null, null, null, null ];
         this.wave++;
         document.querySelector(`#generation`).innerText = `Wave: ${this.wave}`;
 
-        if(this.player == 1){
+        if(this.player == 1){ // Isso aqui pode ser feito na própria Ia, pois eu posso ter vários indivíduos
             this.attempts++;
 
             this.Ia.death(this.playerPosition);
@@ -160,7 +155,7 @@ class Board{
                 if(this.automateKey) {
                     this.automate();
                 }
-            }, 10);
+            }, 50);
         }
     }
 }

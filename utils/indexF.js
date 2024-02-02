@@ -39,7 +39,7 @@ class Tabuleiro{
     }
 
     criarMatriz = () => { // Criando a matriz de acordo com o arquivo "padrao.txt"
-        const data = fs.readFileSync("data/padrao.txt", "utf8"); // Lê o arquivo de texto
+        const data = fs.readFileSync("../data/padrao.txt", "utf8"); // Lê o arquivo de texto
 
         const linhas = data.split("\n"); // Separa as linhas do arquivo
 
