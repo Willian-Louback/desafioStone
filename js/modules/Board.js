@@ -37,7 +37,7 @@ class Board {
     async automate(){
         this.automateKey = true;
 
-        const { drawnNumber, numberToFollow } = await this.Ia.choosePath(this.playerPosition, this.valuePossibleMovement, this.matriz, this.newMatriz, this.wave);
+        const { drawnNumber, numberToFollow } = await this.Ia.choosePath(this.playerPosition, this.valuePossibleMovement, this.newMatriz, this.wave);
 
         this.positionMoveNumber = drawnNumber;
         this.numberToFollow = numberToFollow;
@@ -134,8 +134,10 @@ class Board {
 
                     this.automate();
                 }
-            }, 100);
+            }, 500);
         } else if(this.player == 4){
+            this.Ia.win(this.playerPosition);
+
             console.log("Parabéns, você chegou!");
             console.log("Tentativa Atual:", this.attempts);
             console.log("wave:", this.wave);
@@ -155,7 +157,7 @@ class Board {
                 if(this.automateKey) {
                     this.automate();
                 }
-            }, 50);
+            }, 100);
         }
     }
 }

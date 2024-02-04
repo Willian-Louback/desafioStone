@@ -16,28 +16,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray + 1][index + 1]
                     ];
 
-                    // if (this.chave != true){
-                    // if(playerPosition[0] == indexArray && playerPosition[1] == index){
-                    //     //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //     this.verificaEvitar = [
-                    //         [indexArray, index + 1],
-                    //         [indexArray, index - 1],
-                    //         [indexArray + 1, index],
-                    //         null
-                    //     ];
-                    // }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             null
-                    //         ];
-                    //     }
-                    // }
-
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray == 0 && index != 0 && index != 84){ // cuidando do topo
                     cases = [
@@ -48,29 +26,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray + 1][index + 1]
                     ];
 
-                    // if (this.chave != true){
-                    // if(playerPosition[0] == indexArray && playerPosition[1] == index){
-                    //     //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //     this.verificaEvitar = [
-                    //         [indexArray,index+1],
-                    //         [indexArray,index-1],
-                    //         [indexArray+1,index],
-                    //         null
-                    //     ];
-                    // }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             null
-                    //         ];
-                    //     }
-                    // }
-
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray == 0 && index == 84){ //cuidando do canto superior direito
                     cases = [
@@ -78,29 +33,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray + 1][index],
                         matriz[indexArray + 1][index - 1]
                     ];
-
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             null,
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             null
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             null,
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             null
-                    //         ];
-                    //     }
-                    // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray == 64 && index == 0){ //cuidando do canto inferior esquerdo
@@ -110,29 +42,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray][index + 1]
                     ];
 
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //     // console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             [indexArray,index+1],
-                    //             null,
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             null,
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
-
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray == 64 && index == 83){ //cuidando do canto inferior direito
                     cases = [
@@ -141,26 +50,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray - 1][index + 1],
                         matriz[indexArray][index - 1]
                     ];
-
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         this.verificaEvitar = [
-                    //             [indexArray][index+1],
-                    //             [indexArray][index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         this.verificaEvitarV = [
-                    //             [indexArray][index+1],
-                    //             [indexArray][index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray == 64 && index != 84){ //cuidando da parte de baixo
@@ -172,29 +61,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray][index + 1]
                     ];
 
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             null,
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
-
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray != 0 && index == 0){ //cuidando do canto esquerdo
                     cases = [
@@ -205,29 +71,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray][index + 1]
                     ];
 
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             [indexArray,index+1],
-                    //             null,
-                    //             [indexArray+1,index],
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             null,
-                    //             [indexArray+1,index],
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
-
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if(indexArray != 64 && index == 84){ //cuidando do canto direito
                     cases = [
@@ -237,29 +80,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray + 1][index - 1],
                         matriz[indexArray][index - 1]
                     ];
-
-                    // if (this.chave != true){
-                    //     if(this.contadorV == indexArray && this.contadorH == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //         this.verificaEvitar = [
-                    //             null,
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             null,
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 } else if((indexArray != 0 && index != 0) && (indexArray != 64 && index != 84)){ //restante
@@ -273,29 +93,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         matriz[indexArray + 1][index - 1],
                         matriz[indexArray + 1][index + 1]
                     ];
-
-                    // if (this.chave != true){
-                    // if(this.contadorV == indexArray && this.contadorH == index){
-                    //     //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-
-                    //     this.verificaEvitar = [
-                    //         [indexArray,index+1],
-                    //         [indexArray,index-1],
-                    //         [indexArray+1,index],
-                    //         [indexArray-1,index]
-                    //     ];
-                    // }
-                    // } else {
-                    //     if(this.contadorVV == indexArray && this.contadorHV == index){
-                    //         //console.log('passou\n playerArray:',this.contadorV,'array:',indexArray,'\nplayerindex:',this.contadorH,'index:',index);
-                    //         this.verificaEvitarV = [
-                    //             [indexArray,index+1],
-                    //             [indexArray,index-1],
-                    //             [indexArray+1,index],
-                    //             [indexArray-1,index]
-                    //         ];
-                    //     }
-                    // }
 
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 }
@@ -335,22 +132,6 @@ const calculateMatriz = async (matriz, playerPosition, valuePossibleMovement) =>
                         valuePossibleMovement
                     });
                 }
-                // } else {
-                // if(indexArray == 64 && index == 84){
-                //     if(this.verificaEvitarV[0] != null){
-                //         this.evitarV[0] = newMatriz[this.verificaEvitarV[0][0]][this.verificaEvitarV[0][1]]; //direita
-                //     }
-                //     if(this.verificaEvitarV[1] != null){
-                //         this.evitarV[1] = newMatriz[this.verificaEvitarV[1][0]][this.verificaEvitarV[1][1]]; //esquerda
-                //     }
-                //     if(this.verificaEvitarV[2] != null){
-                //         this.evitarV[2] = newMatriz[this.verificaEvitarV[2][0]][this.verificaEvitarV[2][1]]; //baixo
-                //     }
-                //     if(this.verificaEvitarV[3] != null){
-                //         this.evitarV[3] = newMatriz[this.verificaEvitarV[3][0]][this.verificaEvitarV[3][1]]; //cima
-                //     }
-                // }
-                // }
 
                 cases = [];
                 quantityDangerous = 0;

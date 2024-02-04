@@ -1,10 +1,15 @@
-// import calculateMatriz from "./calculateMatriz.js";
+import calculateMatriz from "./calculateMatriz.js";
 
 class Ia {
     constructor() {
         this.drawnNumber;
-        this.nextMatriz;
-        this.nextNewMatriz;
+        this.saveMatriz;
+        this.saveValueMovement;
+        this.saveValuePossibleMovement;
+        this.savePlayerPosition;
+        this.drawnNumbers = "";
+        // this.quantityNumbersDrawn = 0;
+        // this.verifyQuantity;
         this.numberToFollow = 0;
         this.path = "";
         this.pathCounter = 0;
@@ -12,18 +17,19 @@ class Ia {
         this.distance = 148;
         this.currentDistance = 148;
         this.onlyFollow = false;
+        this.firstTime = true;
+        this.resolve;
 
         // A melhor até agora:
         // this.bestGeneration = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
     }
 
-    async choosePath(playerPosition, valuePossibleMovement, matriz, newMatriz, wave){
+    async choosePath(playerPosition, valuePossibleMovement, newMatriz, wave){
         if((wave < (this.bestGeneration.length - this.numberToFollow) || this.onlyFollow)) {
             return await this.followBetterGeneration();
         }
 
         return new Promise(resolve => {
-            let drawnNumbers = "";
 
             if(playerPosition[0] == 0 && playerPosition[1] == 0){
                 valuePossibleMovement = [
@@ -34,55 +40,127 @@ class Ia {
                 ];
             }
 
-            const drawNumber = () => {
-                this.drawnNumber = Math.floor(Math.random() * 7) < 1 ? Math.floor(Math.random() * 2) :
-                    2 + Math.floor(Math.random() * 2);
+            this.resolve = resolve;
 
-                if(this.drawnNumber == 1){
-                    this.drawnNumber = 1;
-                } else if(this.drawnNumber == 3){
-                    this.drawnNumber = 0;
-                } else if(this.drawnNumber == 0){
-                    this.drawnNumber = 3;
-                } else if(this.drawnNumber == 2){
-                    this.drawnNumber = 2;
-                }
+            this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, "");
+        });
+    }
 
-                if(
-                    (drawnNumbers.indexOf(this.drawnNumber) == -1 && valuePossibleMovement[this.drawnNumber] == null) ||
-                    (drawnNumbers.indexOf(this.drawnNumber) == -1 && valuePossibleMovement[this.drawnNumber] == 1)
-                ){
-                    drawnNumbers += this.drawnNumber + " ";
-                }
+    drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers) {
+        this.drawnNumber = Math.floor(Math.random() * 8) < 1 ? Math.floor(Math.random() * 2) :
+            2 + Math.floor(Math.random() * 2);
 
-                if(valuePossibleMovement[this.drawnNumber] == null || valuePossibleMovement[this.drawnNumber] == 1){
-                    if(
-                        (valuePossibleMovement[0] == 1 || valuePossibleMovement[0] == null) &&
-                        (valuePossibleMovement[1] == 1 || valuePossibleMovement[1] == null) &&
-                        (valuePossibleMovement[2] == 1 || valuePossibleMovement[2] == null) &&
-                        (valuePossibleMovement[3] == 1 || valuePossibleMovement[3] == null)
-                    ){
-                        if(valuePossibleMovement[this.drawnNumber] == null){
-                            drawNumber();
-                        } else if(valuePossibleMovement[this.drawnNumber] == 1){
-                            resolve({
-                                drawnNumber: this.drawnNumber,
-                                numberToFollow: this.numberToFollow
-                            });
-                        }
-                    } else {
-                        drawNumber();
+        if(this.drawnNumber == 1){
+            this.drawnNumber = 1;
+        } else if(this.drawnNumber == 3){
+            this.drawnNumber = 0;
+        } else if(this.drawnNumber == 0){
+            this.drawnNumber = 3;
+        } else if(this.drawnNumber == 2){
+            this.drawnNumber = 2;
+        }
+
+        if(drawnNumbers.indexOf(this.drawnNumber) != -1) {
+            this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+            return;
+        }
+
+        if(
+            (drawnNumbers.indexOf(this.drawnNumber) == -1 && valuePossibleMovement[this.drawnNumber] == null) ||
+            (drawnNumbers.indexOf(this.drawnNumber) == -1 && valuePossibleMovement[this.drawnNumber] == 1)
+        ){
+            drawnNumbers += this.drawnNumber + " ";
+        }
+
+
+        if(valuePossibleMovement[this.drawnNumber] == null || valuePossibleMovement[this.drawnNumber] == 1){
+            if(this.firstTime && this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
+                this.drawnNumbers += this.drawnNumber + " ";
+            }
+
+            if(
+                (valuePossibleMovement[0] == 1 || valuePossibleMovement[0] == null) &&
+                (valuePossibleMovement[1] == 1 || valuePossibleMovement[1] == null) &&
+                (valuePossibleMovement[2] == 1 || valuePossibleMovement[2] == null) &&
+                (valuePossibleMovement[3] == 1 || valuePossibleMovement[3] == null)
+            ){
+                if(valuePossibleMovement[this.drawnNumber] == null){
+                    this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+                    return;
+                } else if(valuePossibleMovement[this.drawnNumber] == 1){
+                    if(!this.firstTime) { //aqui vai precisar de outro verificador
+                        this.verifyNextGeneration(this.saveMatriz, this.saveValuePossibleMovement, this.savePlayerPosition);
+                        return;
                     }
-                } else {
-                    resolve({
+
+                    this.drawnNumbers = "";
+
+                    this.resolve({
                         drawnNumber: this.drawnNumber,
                         numberToFollow: this.numberToFollow
                     });
                 }
-            };
+            } else {
+                this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+                return;
+            }
+        } else {
+            if(this.firstTime && this.drawnNumbers.length != 8) {
+                if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
+                    this.drawnNumbers += this.drawnNumber + " ";
+                }
 
-            drawNumber();
-        });
+                this.verifyNextGeneration(newMatriz, valuePossibleMovement, playerPosition);
+                return;
+            }
+
+            this.firstTime = true;
+            this.drawnNumbers = "";
+
+            this.resolve({
+                drawnNumber: this.saveValueMovement,
+                numberToFollow: this.numberToFollow
+            });
+            console.log("resolvido", this.saveValuePossibleMovement, valuePossibleMovement, this.saveValueMovement);
+        }
+    }
+
+    async verifyNextGeneration(newMatrizP, valuePossibleMovementP, playerPosition) { //Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
+        if(this.firstTime) {
+            this.saveMatriz = newMatrizP.slice().map(arrays => arrays.slice());
+            this.saveValueMovement = this.drawnNumber;
+            this.saveValuePossibleMovement = [ ...valuePossibleMovementP ];
+            this.savePlayerPosition = [ ...playerPosition ];
+            this.firstTime = false;
+        } else {
+            this.firstTime = true;
+            this.drawNumber(this.savePlayerPosition, this.saveValuePossibleMovement, this.saveMatriz, "");
+            return;
+        }
+
+        const newPlayerPosition = [ ...playerPosition ];
+
+        if(0 == this.drawnNumber){ //direita
+            newPlayerPosition[0]++;
+            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+
+            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+        } else if(1 == this.drawnNumber){ //esquerda
+            newPlayerPosition[0]--;
+            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+
+            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+        } else if(2 == this.drawnNumber){ //baixo
+            newPlayerPosition[1]++;
+            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+
+            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+        } else if(3 == this.drawnNumber){ //cima
+            newPlayerPosition[1]--;
+            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+
+            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+        }
     }
 
     async followBetterGeneration(){
@@ -133,34 +211,9 @@ class Ia {
         return;
     }
 
-    /*async verificarProximaGeracao(matriz, newMatriz, valuePossibleMovement, playerPosition) { //Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
-        this.nextMatriz = matriz.slice().map(arrays => arrays.slice());
-        this.nextNewMatriz = newMatriz.slice().map(arrays => arrays.slice());
-
-        this.matriz = newMatriz.slice().map(arrays => arrays.slice());
-        //this.playerPositionV = matriz[this.contadorVV][this.contadorHV];
-        if(0 == this.drawnNumber){ //direita
-            playerPosition[0]++;
-            //console.log('R');
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(matriz, playerPosition, valuePossibleMovement);
-        } else if(1 == this.drawnNumber){ //esquerda
-            playerPosition[0]--;
-            //console.log('L');
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(matriz, playerPosition, valuePossibleMovement);
-        } else if(2 == this.drawnNumber){ //baixo
-            playerPosition[1]++;
-            //console.log('D');
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(matriz, playerPosition, valuePossibleMovement);
-        } else if(3 == this.drawnNumber){ //cima
-            playerPosition[1]--;
-            //console.log('U');
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(matriz, playerPosition, valuePossibleMovement);
-        } else { //morte
-            console.log("nada, L", this.drawnNumber);
-        }
-
-        // this.movePlayer();
-    }*/
+    win() {
+        console.log("geração atual:", this.path);
+    }
 }
 
 export default Ia;
