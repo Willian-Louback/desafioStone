@@ -15,18 +15,21 @@ const verifyMovement = async (individual, matriz) => {
 
         if(values[1]){
             individual.valuePossibleMovement[1] = parseInt(matriz[values[1][0]][values[1][1]]); //esquerda
+
         } else {
             individual.valuePossibleMovement[1] = null;
         }
 
         if(values[2]){
             individual.valuePossibleMovement[2] = parseInt(matriz[values[2][0]][values[2][1]]); //baixo
+
         } else {
             individual.valuePossibleMovement[2] = null;
         }
 
         if(values[3]){
             individual.valuePossibleMovement[3] = parseInt(matriz[values[3][0]][values[3][1]]); //cima
+
         } else {
             individual.valuePossibleMovement[3] = null;
         }

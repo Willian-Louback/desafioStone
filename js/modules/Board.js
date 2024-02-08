@@ -9,7 +9,7 @@ class Board {
         this.matriz;
         this.newMatriz;
         this.individuals;
-        this.numberOfIndividuals = 300;
+        this.numberOfIndividuals = 400;
         this.deathIndividuals = 0;
         this.wave = 0;
         this.attempts = 1;
@@ -80,10 +80,12 @@ class Board {
     }
 
     async calculateMove() {
+        await this.Ia.verifyNextMatriz(this.newMatriz);
+
         for(let i = 0; i < this.numberOfIndividuals; i++){
             if(this.individuals[i].status == "alive") {
                 this.individuals[i] = await verifyMovement(this.individuals[i], this.newMatriz);
-                this.positionMoveNumber = await this.Ia.choosePath(this.individuals[i], this.newMatriz, this.wave);
+                this.positionMoveNumber = await this.Ia.choosePath(this.individuals[i], this.wave);
 
                 await this.movePlayer(this.individuals[i]);
             }
@@ -96,20 +98,18 @@ class Board {
         return new Promise(resolve => {
             if(0 == this.positionMoveNumber){ //direita
                 individual.position[0]++;
-                this.Ia.addPath("0", individual.id);
             } else if(1 == this.positionMoveNumber){ //esquerda
                 individual.position[0]--;
-                this.Ia.addPath("1", individual.id);
             } else if(2 == this.positionMoveNumber){ //baixo
                 individual.position[1]++;
-                this.Ia.addPath("2", individual.id);
             } else if(3 == this.positionMoveNumber){ //cima
                 individual.position[1]--;
-                this.Ia.addPath("3", individual.id);
             } else { //morte
                 console.log("ERROR", this.positionMoveNumber);
                 return;
             }
+
+            this.Ia.saveConfig(this.positionMoveNumber, individual);
 
             individual.cellValue = this.newMatriz[individual.position[1]][individual.position[0]];
             resolve();

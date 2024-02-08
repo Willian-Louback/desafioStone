@@ -1,4 +1,5 @@
 import calculateMatriz from "./calculateMatriz.js";
+import verifyMovement from "./verifyMovement.js";
 
 class Ia {
     constructor() {
@@ -19,7 +20,7 @@ class Ia {
         this.individuals = {};
         this.currentIndividual;
         this.weight = 0;
-        this.intelligence = false;
+        this.intelligence = true;
 
         // A melhor até agora:
         // this.bestGeneration = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
@@ -59,7 +60,11 @@ class Ia {
         return individualsToReturn;
     }
 
-    async choosePath(individual, newMatriz, wave){
+    async verifyNextMatriz(matriz) {
+        this.saveMatriz = await calculateMatriz(matriz);
+    }
+
+    async choosePath(individual, wave){
         this.currentIndividual = individual.id;
 
         if(this.bestGeneration.length > 0 && this.individuals[this.currentIndividual].numberToFollow == 0){
@@ -73,15 +78,14 @@ class Ia {
         return new Promise(resolve => {
             this.resolve = resolve;
 
-            this.saveMatriz = newMatriz.slice().map(arrays => arrays.slice());
             this.saveValuePossibleMovement = [ ...individual.valuePossibleMovement ];
             this.saveIndividualPosition = [ ...individual.position ];
 
-            this.drawNumber(individual.position, individual.valuePossibleMovement, newMatriz, "");
+            this.drawNumber(individual.position, individual.valuePossibleMovement, "");
         });
     }
 
-    drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers) {
+    drawNumber(playerPosition, valuePossibleMovement, drawnNumbers) {
         this.drawnNumber = Math.floor(Math.random() * this.individuals[this.currentIndividual].weight) < 1 ? Math.floor(Math.random() * 2) :
             2 + Math.floor(Math.random() * 2);
 
@@ -92,7 +96,7 @@ class Ia {
         }
 
         if(drawnNumbers.indexOf(this.drawnNumber) != -1) {
-            this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+            this.drawNumber(playerPosition, valuePossibleMovement, drawnNumbers);
             return;
         }
 
@@ -115,7 +119,7 @@ class Ia {
                 (valuePossibleMovement[3] == 1 || valuePossibleMovement[3] == null)
             ){
                 if(valuePossibleMovement[this.drawnNumber] == null){
-                    this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+                    this.drawNumber(playerPosition, valuePossibleMovement, drawnNumbers);
                     return;
                 } else if(valuePossibleMovement[this.drawnNumber] == 1){
                     if(this.intelligence) {
@@ -123,31 +127,31 @@ class Ia {
                             if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
                                 this.drawnNumbers += this.drawnNumber + " ";
                             }
+                            this.individuals[this.currentIndividual].position = [ ...this.saveIndividualPosition];
 
-                            this.verifyNextGeneration(this.saveMatriz);
+                            this.verifyNextGeneration();
                             return;
                         }
-
-                        this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
                     }
 
                     this.drawnNumbers = "";
 
-                    this.resolve(this.drawnNumber);                }
+                    this.resolve(this.drawnNumber);
+                }
             } else {
-                this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
+                this.drawNumber(playerPosition, valuePossibleMovement, drawnNumbers);
                 return;
             }
         } else {
             if(this.intelligence) {
-                this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
+                this.individuals[this.currentIndividual].position = [ ...this.saveIndividualPosition];
 
                 if(this.firstTime && this.drawnNumbers.length != 8) {
                     if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
                         this.drawnNumbers += this.drawnNumber + " ";
                     }
 
-                    this.verifyNextGeneration(newMatriz);
+                    this.verifyNextGeneration();
                     return;
                 }
             } else {
@@ -161,37 +165,29 @@ class Ia {
         }
     }
 
-    async verifyNextGeneration(newMatrizP) {
+    async verifyNextGeneration() {
         if(this.firstTime) {
             this.saveValueMovement = this.drawnNumber;
             this.firstTime = false;
         } else {
             this.firstTime = true;
-            this.drawNumber(this.saveIndividualPosition, this.saveValuePossibleMovement, this.saveMatriz, "");
+            this.drawNumber(this.saveIndividualPosition, this.saveValuePossibleMovement, "");
             return;
         }
 
         if(0 == this.drawnNumber){ //direita
             this.individuals[this.currentIndividual].position[0]++;
-            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
-
-            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(1 == this.drawnNumber){ //esquerda
             this.individuals[this.currentIndividual].position[0]--;
-            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
-
-            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(2 == this.drawnNumber){ //baixo
             this.individuals[this.currentIndividual].position[1]++;
-            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
-
-            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(3 == this.drawnNumber){ //cima
             this.individuals[this.currentIndividual].position[1]--;
-            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
-
-            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         }
+
+        this.individuals[this.currentIndividual] = await verifyMovement(this.individuals[this.currentIndividual], this.saveMatriz);
+
+        this.drawNumber(this.individuals[this.currentIndividual].position, this.individuals[this.currentIndividual].valuePossibleMovement, "");
     }
 
     newNumberToFollow() {
@@ -212,18 +208,10 @@ class Ia {
         });
     }
 
-    addPath(path, position) {
-        this.individuals[position].path += path;
-
-        if(0 == path){ //direita
-            this.individuals[position].position[0]++;
-        } else if(1 == path){ //esquerda
-            this.individuals[position].position[0]--;
-        } else if(2 == path){ //baixo
-            this.individuals[position].position[1]++;
-        } else if(3 == path){ //cima
-            this.individuals[position].position[1]--;
-        }
+    saveConfig(path, individual) {
+        this.individuals[individual.id].path += path;
+        this.individuals[individual.id].valuePossibleMovement = individual.valuePossibleMovement;
+        this.individuals[individual.id].position = individual.position;
     }
 
     saveBestGeneration() {
