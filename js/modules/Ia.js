@@ -19,6 +19,7 @@ class Ia {
         this.individuals = {};
         this.currentIndividual;
         this.weight = 0;
+        this.intelligence = false;
 
         // A melhor até agora:
         // this.bestGeneration = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
@@ -117,17 +118,20 @@ class Ia {
                     this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
                     return;
                 } else if(valuePossibleMovement[this.drawnNumber] == 1){
-                    if(!this.firstTime) { // Aqui pode ser criado outro verificador para melhorar a eficiência
-                        if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
-                            this.drawnNumbers += this.drawnNumber + " ";
+                    if(this.intelligence) {
+                        if(!this.firstTime) { // Aqui pode ser criado outro verificador para melhorar a eficiência
+                            if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
+                                this.drawnNumbers += this.drawnNumber + " ";
+                            }
+
+                            this.verifyNextGeneration(this.saveMatriz);
+                            return;
                         }
 
-                        this.verifyNextGeneration(this.saveMatriz);
-                        return;
+                        this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
                     }
 
                     this.drawnNumbers = "";
-                    this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
 
                     this.resolve(this.drawnNumber);                }
             } else {
@@ -135,15 +139,19 @@ class Ia {
                 return;
             }
         } else {
-            this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
+            if(this.intelligence) {
+                this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
 
-            if(this.firstTime && this.drawnNumbers.length != 8) {
-                if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
-                    this.drawnNumbers += this.drawnNumber + " ";
+                if(this.firstTime && this.drawnNumbers.length != 8) {
+                    if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
+                        this.drawnNumbers += this.drawnNumber + " ";
+                    }
+
+                    this.verifyNextGeneration(newMatriz);
+                    return;
                 }
-
-                this.verifyNextGeneration(newMatriz);
-                return;
+            } else {
+                this.saveValueMovement = this.drawnNumber;
             }
 
             this.firstTime = true;

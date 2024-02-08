@@ -11,7 +11,6 @@ class Draw {
         const widthScreen = window.innerWidth;
 
         if(widthScreen < 480) {
-            console.log("foi");
             this.canvas.width = 340;
             this.canvas.height = 260;
 

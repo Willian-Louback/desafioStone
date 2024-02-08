@@ -1,5 +1,6 @@
 import generateMatriz from "./generateMatriz.js";
 import calculateMatriz from "./calculateMatriz.js";
+import verifyMovement from "./verifyMovement.js";
 import Draw from "./Draw.js";
 import Ia from "./Ia.js";
 
@@ -8,7 +9,7 @@ class Board {
         this.matriz;
         this.newMatriz;
         this.individuals;
-        this.numberOfIndividuals = 30;
+        this.numberOfIndividuals = 300;
         this.deathIndividuals = 0;
         this.wave = 0;
         this.attempts = 1;
@@ -75,15 +76,13 @@ class Board {
 
         this.matriz = await generateMatriz(this.Draw);
 
-        const { newMatriz, individuals } = await calculateMatriz(this.matriz, this.individuals);
-
-        this.newMatriz = newMatriz;
-        this.individuals = individuals;
+        this.newMatriz = await calculateMatriz(this.matriz);
     }
 
     async calculateMove() {
         for(let i = 0; i < this.numberOfIndividuals; i++){
             if(this.individuals[i].status == "alive") {
+                this.individuals[i] = await verifyMovement(this.individuals[i], this.newMatriz);
                 this.positionMoveNumber = await this.Ia.choosePath(this.individuals[i], this.newMatriz, this.wave);
 
                 await this.movePlayer(this.individuals[i]);
@@ -126,7 +125,7 @@ class Board {
         document.querySelector(`#generation`).innerText = `Wave: ${this.wave}`;
 
         Object.values(this.individuals).forEach(individual => {
-            if(individual.status == "death") {
+            if(individual.status == "death" || this.win) {
                 return;
             }
 
@@ -169,10 +168,7 @@ class Board {
 
         if(this.deathIndividuals != this.numberOfIndividuals && !this.win) {
             setTimeout(async () => {
-                const { newMatriz, individuals } = await calculateMatriz(this.matriz, this.individuals);
-
-                this.newMatriz = newMatriz;
-                this.individuals = individuals;
+                this.newMatriz = await calculateMatriz(this.matriz);
 
                 if(this.automateKey) {
                     this.calculateMove();

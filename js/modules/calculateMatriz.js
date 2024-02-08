@@ -1,9 +1,8 @@
-const calculateMatriz = async (matriz, individuals) => {
+const calculateMatriz = async (matriz) => {
     return new Promise(resolve => {
         const newMatriz = matriz.slice().map(arrays => arrays.slice());
 
         let cases = [];
-        const possibleMoves = [];
         let quantityDangerous = 0;
 
         matriz.forEach((arrays, indexArray) => {
@@ -97,24 +96,6 @@ const calculateMatriz = async (matriz, individuals) => {
                     cases.forEach(cases => cases == 1 ? quantityDangerous++ : null);
                 }
 
-                Object.values(individuals).forEach(individual => {
-                    if(individual.position[1] == indexArray && individual.position[0] == index){
-                        if(individual.status == "death") {
-                            return;
-                        }
-
-                        possibleMoves.push({
-                            id: individual.id,
-                            values: [
-                                index + 1 > 84 ? null : [indexArray, index + 1],
-                                index - 1 < 0 ? null : [indexArray, index - 1],
-                                indexArray + 1 > 64 ? null : [indexArray + 1, index],
-                                indexArray - 1 < 0 ? null : [indexArray - 1, index]
-                            ]
-                        });
-                    }
-                });
-
                 if(matriz[indexArray][index] == 0){ //Conferindo se é branco ou verde e aplicando a configuração de disseminação das células
                     quantityDangerous > 1 && quantityDangerous < 5 ? newMatriz[indexArray][index] = 1 : null;
                 } else if(matriz[indexArray][index] == 1){
@@ -122,36 +103,7 @@ const calculateMatriz = async (matriz, individuals) => {
                 }
 
                 if(indexArray == 64 && index == 84){
-                    possibleMoves.forEach(possibleMove => {
-                        if(possibleMove.values[0]){
-                            individuals[possibleMove.id].valuePossibleMovement[0] = parseInt(newMatriz[possibleMove.values[0][0]][possibleMove.values[0][1]]); //direita
-                        } else {
-                            individuals[possibleMove.id].valuePossibleMovement[0] = null;
-                        }
-
-                        if(possibleMove.values[1]){
-                            individuals[possibleMove.id].valuePossibleMovement[1] = parseInt(newMatriz[possibleMove.values[1][0]][possibleMove.values[1][1]]); //esquerda
-                        } else {
-                            individuals[possibleMove.id].valuePossibleMovement[1] = null;
-                        }
-
-                        if(possibleMove.values[2]){
-                            individuals[possibleMove.id].valuePossibleMovement[2] = parseInt(newMatriz[possibleMove.values[2][0]][possibleMove.values[2][1]]); //baixo
-                        } else {
-                            individuals[possibleMove.id].valuePossibleMovement[2] = null;
-                        }
-
-                        if(possibleMove.values[3]){
-                            individuals[possibleMove.id].valuePossibleMovement[3] = parseInt(newMatriz[possibleMove.values[3][0]][possibleMove.values[3][1]]); //cima
-                        } else {
-                            individuals[possibleMove.id].valuePossibleMovement[3] = null;
-                        }
-                    });
-
-                    resolve({
-                        newMatriz,
-                        individuals
-                    });
+                    resolve(newMatriz);
                 }
 
                 cases = [];
