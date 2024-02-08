@@ -17,7 +17,7 @@ class Draw {
 
             this.heightCell = this.canvas.height / 65;
             this.widthCell = this.canvas.width / 85;
-        } else if(widthScreen > 480 && widthScreen < 685) {
+        } else if(widthScreen >= 480 && widthScreen <= 685) {
             this.canvas.width = 510;
             this.canvas.height = 390;
 

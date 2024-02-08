@@ -13,8 +13,8 @@ button {
 }
 
 .area {
-    width: 1020px;
-    height: 910px;
+    width: 680px;
+    height: 520px;
     display: flex;
     border: 1px solid black;
 }
