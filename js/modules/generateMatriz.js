@@ -1,5 +1,3 @@
-import Draw from "./Draw.js";
-
 const generateMatriz = async (draw) => {
     return new Promise(resolve => {
         fetch("../../data/padrao.txt")
