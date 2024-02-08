@@ -6,13 +6,8 @@ class Ia {
         this.saveMatriz;
         this.saveValueMovement;
         this.saveValuePossibleMovement;
-        this.savePlayerPosition;
+        this.saveIndividualPosition;
         this.drawnNumbers = "";
-        // this.quantityNumbersDrawn = 0;
-        // this.verifyQuantity;
-        this.numberToFollow = 0;
-        this.path = "";
-        this.pathCounter = 0;
         this.bestGeneration = "";
         this.distance = 148;
         this.currentDistance = 148;
@@ -20,44 +15,79 @@ class Ia {
         this.firstTime = true;
         this.resolve;
 
+        //pesos do algoritmo genético
+        this.individuals = {};
+        this.currentIndividual;
+        this.weight = 0;
+
         // A melhor até agora:
         // this.bestGeneration = "0022202220202200210010002122302202123103202020200212202001303123100120020002120203223002300120220002203223233220100000100100022021332222001101000213220002322021320022020032121000300002010032100203203022202222000022022331031110000203130332130300002030200213221002302222022302222033000212022200";
     }
 
-    async choosePath(playerPosition, valuePossibleMovement, newMatriz, wave){
-        if((wave < (this.bestGeneration.length - this.numberToFollow) || this.onlyFollow)) {
+    createIndividuals(numberOfIndividuals) {
+        const individualsToReturn = {};
+        this.individuals = {};
+
+        for(let i = 0; i < numberOfIndividuals; i++) {
+            this.individuals[i] = {
+                id: i,
+                position: [ 0, 0 ],
+                weight: this.weight > 4 ?
+                    (Math.floor(Math.random() * 2)) == 0 ?
+                        this.weight + (Math.floor(Math.random() * 3))
+                        : this.weight - (Math.floor(Math.random() * 3))
+                    : (Math.floor(Math.random() * 10) + 2),
+                path: "",
+                cellValue: 3,
+                valuePossibleMovement: [ null, null, null, null ],
+                numberToFollow: 0,
+                pathCounter: 0,
+                distance: 148,
+                status: "alive"
+            };
+
+            individualsToReturn[i] = {
+                id: i,
+                position: [ 0, 0 ],
+                cellValue: 3,
+                valuePossibleMovement: [ null, null, null, null ],
+                status: "alive"
+            };
+        }
+
+        return individualsToReturn;
+    }
+
+    async choosePath(individual, newMatriz, wave){
+        this.currentIndividual = individual.id;
+
+        if(this.bestGeneration.length > 0 && this.individuals[this.currentIndividual].numberToFollow == 0){
+            this.newNumberToFollow();
+        }
+
+        if((wave < this.individuals[this.currentIndividual].numberToFollow || this.onlyFollow)) {
             return await this.followBetterGeneration();
         }
 
         return new Promise(resolve => {
-
-            if(playerPosition[0] == 0 && playerPosition[1] == 0){
-                valuePossibleMovement = [
-                    newMatriz[0][1],
-                    null,
-                    newMatriz[1][0],
-                    null
-                ];
-            }
-
             this.resolve = resolve;
 
-            this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, "");
+            this.saveMatriz = newMatriz.slice().map(arrays => arrays.slice());
+            this.saveValuePossibleMovement = [ ...individual.valuePossibleMovement ];
+            this.saveIndividualPosition = [ ...individual.position ];
+
+            this.drawNumber(individual.position, individual.valuePossibleMovement, newMatriz, "");
         });
     }
 
     drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers) {
-        this.drawnNumber = Math.floor(Math.random() * 8) < 1 ? Math.floor(Math.random() * 2) :
+        this.drawnNumber = Math.floor(Math.random() * this.individuals[this.currentIndividual].weight) < 1 ? Math.floor(Math.random() * 2) :
             2 + Math.floor(Math.random() * 2);
 
-        if(this.drawnNumber == 1){
-            this.drawnNumber = 1;
-        } else if(this.drawnNumber == 3){
+        if(this.drawnNumber == 3){
             this.drawnNumber = 0;
         } else if(this.drawnNumber == 0){
             this.drawnNumber = 3;
-        } else if(this.drawnNumber == 2){
-            this.drawnNumber = 2;
         }
 
         if(drawnNumbers.indexOf(this.drawnNumber) != -1) {
@@ -71,7 +101,6 @@ class Ia {
         ){
             drawnNumbers += this.drawnNumber + " ";
         }
-
 
         if(valuePossibleMovement[this.drawnNumber] == null || valuePossibleMovement[this.drawnNumber] == 1){
             if(this.firstTime && this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
@@ -88,131 +117,136 @@ class Ia {
                     this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
                     return;
                 } else if(valuePossibleMovement[this.drawnNumber] == 1){
-                    if(!this.firstTime) { //aqui vai precisar de outro verificador
-                        this.verifyNextGeneration(this.saveMatriz, this.saveValuePossibleMovement, this.savePlayerPosition);
+                    if(!this.firstTime) { // Aqui pode ser criado outro verificador para melhorar a eficiência
+                        if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
+                            this.drawnNumbers += this.drawnNumber + " ";
+                        }
+
+                        this.verifyNextGeneration(this.saveMatriz);
                         return;
                     }
 
                     this.drawnNumbers = "";
+                    this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
 
-                    this.resolve({
-                        drawnNumber: this.drawnNumber,
-                        numberToFollow: this.numberToFollow
-                    });
-                }
+                    this.resolve(this.drawnNumber);                }
             } else {
                 this.drawNumber(playerPosition, valuePossibleMovement, newMatriz, drawnNumbers);
                 return;
             }
         } else {
+            this.individuals[this.currentIndividual].position = this.saveIndividualPosition;
+
             if(this.firstTime && this.drawnNumbers.length != 8) {
                 if(this.drawnNumbers.indexOf(this.drawnNumber) == -1) {
                     this.drawnNumbers += this.drawnNumber + " ";
                 }
 
-                this.verifyNextGeneration(newMatriz, valuePossibleMovement, playerPosition);
+                this.verifyNextGeneration(newMatriz);
                 return;
             }
 
             this.firstTime = true;
             this.drawnNumbers = "";
 
-            this.resolve({
-                drawnNumber: this.saveValueMovement,
-                numberToFollow: this.numberToFollow
-            });
-            console.log("resolvido", this.saveValuePossibleMovement, valuePossibleMovement, this.saveValueMovement);
+            this.resolve(this.saveValueMovement);
         }
     }
 
-    async verifyNextGeneration(newMatrizP, valuePossibleMovementP, playerPosition) { //Eu achei o erro, alguma coisa aqui está dando certo. O primeiro funciona normalmente, mas o segundo está mandando uns números suspeitos
+    async verifyNextGeneration(newMatrizP) {
         if(this.firstTime) {
-            this.saveMatriz = newMatrizP.slice().map(arrays => arrays.slice());
             this.saveValueMovement = this.drawnNumber;
-            this.saveValuePossibleMovement = [ ...valuePossibleMovementP ];
-            this.savePlayerPosition = [ ...playerPosition ];
             this.firstTime = false;
         } else {
             this.firstTime = true;
-            this.drawNumber(this.savePlayerPosition, this.saveValuePossibleMovement, this.saveMatriz, "");
+            this.drawNumber(this.saveIndividualPosition, this.saveValuePossibleMovement, this.saveMatriz, "");
             return;
         }
 
-        const newPlayerPosition = [ ...playerPosition ];
-
         if(0 == this.drawnNumber){ //direita
-            newPlayerPosition[0]++;
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+            this.individuals[this.currentIndividual].position[0]++;
+            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
 
-            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(1 == this.drawnNumber){ //esquerda
-            newPlayerPosition[0]--;
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+            this.individuals[this.currentIndividual].position[0]--;
+            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
 
-            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(2 == this.drawnNumber){ //baixo
-            newPlayerPosition[1]++;
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+            this.individuals[this.currentIndividual].position[1]++;
+            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
 
-            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
         } else if(3 == this.drawnNumber){ //cima
-            newPlayerPosition[1]--;
-            const { newMatriz, valuePossibleMovement } = await calculateMatriz(newMatrizP, newPlayerPosition, valuePossibleMovementP);
+            this.individuals[this.currentIndividual].position[1]--;
+            const { newMatriz, individuals } = await calculateMatriz(newMatrizP, this.individuals);
 
-            this.drawNumber(newPlayerPosition, valuePossibleMovement, newMatriz, "");
+            this.drawNumber(individuals.position, individuals[this.currentIndividual].valuePossibleMovement, newMatriz, "");
+        }
+    }
+
+    newNumberToFollow() {
+        if(Math.floor(Math.random() * 2) == 0) {
+            this.individuals[this.currentIndividual].numberToFollow = this.bestGeneration.length - Math.floor(Math.random() * 40);
+        } else {
+            this.individuals[this.currentIndividual].numberToFollow = Math.floor(Math.random() * (this.bestGeneration.length - 1));
         }
     }
 
     async followBetterGeneration(){
         return new Promise(resolve => {
-            this.drawnNumber = parseInt(this.bestGeneration[this.pathCounter]);
+            this.drawnNumber = parseInt(this.bestGeneration[this.individuals[this.currentIndividual].pathCounter]);
 
-            if(this.numberToFollow == 0){
-                // if(Math.floor(Math.random() * 2) == 0) {
-                // console.log("40");
-                this.numberToFollow = Math.floor(Math.random() * 40) + 1;
-                // } else {
-                //     console.log("length");
-                //     this.numberToFollow = Math.floor(Math.random() * (this.bestGeneration.length - 1));
-                // }
-            }
+            this.individuals[this.currentIndividual].pathCounter++;
 
-            this.pathCounter++;
-
-            resolve({
-                drawnNumber: this.drawnNumber,
-                numberToFollow: this.numberToFollow
-            });
+            resolve(this.drawnNumber);
         });
     }
 
-    addPath(path) {
-        this.path += path;
+    addPath(path, position) {
+        this.individuals[position].path += path;
+
+        if(0 == path){ //direita
+            this.individuals[position].position[0]++;
+        } else if(1 == path){ //esquerda
+            this.individuals[position].position[0]--;
+        } else if(2 == path){ //baixo
+            this.individuals[position].position[1]++;
+        } else if(3 == path){ //cima
+            this.individuals[position].position[1]--;
+        }
     }
 
-    death(playerPosition) {
-        this.currentDistance = (64 - parseInt(playerPosition[1])) + (84 - parseInt(playerPosition[0]));
+    saveBestGeneration() {
+        Object.values(this.individuals).forEach(individual => {
+            if(individual.distance < this.distance) {
+                this.distance = individual.distance;
+                this.bestGeneration = individual.path;
+                this.weight = individual.weight;
+            }
+        });
+    }
 
-        if(this.currentDistance < this.distance){
-            this.distance = this.currentDistance;
-            this.bestGeneration = this.path;
-        }
+    death(individual) {
+        this.currentDistance = (64 - parseInt(individual.position[1])) + (84 - parseInt(individual.position[0]));
 
-        this.pathCounter = 0;
-        this.numberToFollow = 0;
+        this.individuals[individual.id].distance = this.currentDistance;
 
+        console.log("Indivíduo:", this.individuals[individual.id]);
         console.log("Distância restante:", this.currentDistance);
         console.log("Melhor distância:", this.distance);
-        console.log("Geração atual:", this.path);
+        console.log("Geração atual:", this.individuals[individual.id].path);
         console.log("Melhor geração: ", this.bestGeneration);
 
-        this.path = "";
         this.currentDistance = 148;
-        return;
+        this.individuals[individual.id].status = "death";
+
+        return "death";
     }
 
-    win() {
-        console.log("geração atual:", this.path);
+    win(individual) {
+        console.log("Indivíduo:", this.individuals[individual.id]);
     }
 }
 

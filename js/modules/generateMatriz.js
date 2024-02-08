@@ -13,7 +13,12 @@ const generateMatriz = async () => {
 
                 const draw = new Draw();
 
-                draw.draw(matriz, [ 0, 0 ]);
+                draw.draw(
+                    matriz,
+                    [{
+                        position: [ 0, 0 ]
+                    }]
+                );
 
                 resolve(matriz);
             })

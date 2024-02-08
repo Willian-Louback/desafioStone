@@ -7,41 +7,54 @@ class Draw {
         this.positionDraw = [ 0, 0 ];
     }
 
-    draw(matriz, playerPosition) {
-        this.ctx.clearRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
+    async draw(matriz, individuals) {
+        return new Promise(resolve => {
+            this.ctx.clearRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
 
-        this.ctx.beginPath();
+            this.ctx.beginPath();
 
-        matriz.forEach((value, index) => {
-            value.forEach((valueNumber, indexNumber) => {
-                if(valueNumber == 0) {
-                    this.ctx.fillStyle = "cyan";
-                    this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
-                } else if(valueNumber == 1) {
-                    this.ctx.fillStyle = "green";
-                    this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
-                } else {
-                    this.ctx.fillStyle = "yellow";
-                    this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
-                }
+            matriz.forEach((value, index) => {
+                value.forEach((valueNumber, indexNumber) => {
+                    if(valueNumber == 0) {
+                        this.ctx.fillStyle = "cyan";
+                        this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
+                    } else if(valueNumber == 1) {
+                        this.ctx.fillStyle = "green";
+                        this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
+                    } else {
+                        this.ctx.fillStyle = "yellow";
+                        this.ctx.fillRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
+                    }
 
-                if(index == playerPosition[1] && indexNumber == playerPosition[0]) {
-                    this.ctx.fillStyle = "red";
-                    this.ctx.fillRect(this.positionDraw[0] + this.widthCell / 4, this.positionDraw[1] + this.heightCell / 4, this.widthCell / 2, this.heightCell / 2);
-                }
+                    Object.values(individuals).forEach(individual => {
+                        if(index == individual.position[1] && indexNumber == individual.position[0]) {
+                            if(individual.status == "death") {
+                                return;
+                            }
 
-                if(indexNumber == 84) {
-                    this.positionDraw[1] += this.heightCell;
-                    this.positionDraw[0] = 0;
-                } else {
-                    this.positionDraw[0] += this.widthCell;
-                }
+                            if(valueNumber == 1) {
+                                this.ctx.fillStyle = "black";
+                            } else {
+                                this.ctx.fillStyle = "red";
+                            }
+                            this.ctx.fillRect(this.positionDraw[0] + this.widthCell / 4, this.positionDraw[1] + this.heightCell / 4, this.widthCell / 2, this.heightCell / 2);
+                        }
+                    });
+
+                    if(indexNumber == 84) {
+                        this.positionDraw[1] += this.heightCell;
+                        this.positionDraw[0] = 0;
+                    } else {
+                        this.positionDraw[0] += this.widthCell;
+                    }
+                });
             });
-        });
 
-        this.ctx.closePath();
-        this.positionDraw[0] = 0;
-        this.positionDraw[1] = 0;
+            this.ctx.closePath();
+            this.positionDraw[0] = 0;
+            this.positionDraw[1] = 0;
+            resolve();
+        });
     }
 }
 

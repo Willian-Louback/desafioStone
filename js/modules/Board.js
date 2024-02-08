@@ -7,157 +7,177 @@ class Board {
     constructor(){
         this.matriz;
         this.newMatriz;
-        this.player = 3;
-        this.playerPosition = [ 0, 0 ];
+        this.individuals;
+        this.numberOfIndividuals = 30;
+        this.deathIndividuals = 0;
         this.wave = 0;
-        this.valuePossibleMovement = [ null, null, null, null ];
         this.attempts = 1;
         this.positionMoveNumber;
         this.automateKey = false;
-        this.numberToFollow = 0;
         this.Ia = new Ia();
         this.Draw = new Draw();
+        this.win = false;
     }
 
-    async init() {
-        this.matriz = await generateMatriz();
-
-        const { newMatriz, valuePossibleMovement } = await calculateMatriz(this.matriz, this.playerPosition, this.valuePossibleMovement);
-
-        this.newMatriz = newMatriz;
-        this.valuePossibleMovement = valuePossibleMovement;
-
-        document.querySelector(".up").addEventListener("click", this.up.bind(this));
-        document.querySelector(".down").addEventListener("click", this.down.bind(this));
-        document.querySelector(".right").addEventListener("click", this.right.bind(this));
-        document.querySelector(".left").addEventListener("click", this.left.bind(this));
-        document.querySelector("#automate").addEventListener("click", this.automate.bind(this));
+    stop(){
+        this.automateKey = false;
     }
-
-    async automate(){
-        this.automateKey = true;
-
-        const { drawnNumber, numberToFollow } = await this.Ia.choosePath(this.playerPosition, this.valuePossibleMovement, this.newMatriz, this.wave);
-
-        this.positionMoveNumber = drawnNumber;
-        this.numberToFollow = numberToFollow;
-
-        this.movePlayer();
-    }
-
-    // stop(){
-    //     this.chaveC = false;
-    //     this.ativadorC = false;
-    // }
 
     up(){
         this.positionMoveNumber = 3;
 
-        this.movePlayer();
+        this.movePlayer(0);
     }
 
     down(){
         this.positionMoveNumber = 2;
 
-        this.movePlayer();
+        this.movePlayer(0);
     }
 
     left(){
         this.positionMoveNumber = 1;
 
-        this.movePlayer();
+        this.movePlayer(0);
     }
 
     right(){
         this.positionMoveNumber = 0;
 
-        this.movePlayer();
+        this.movePlayer(0);
     }
 
-    movePlayer() { // Talvez eu posso remover esse método
-        if(0 == this.positionMoveNumber){ //direita
-            this.playerPosition[0]++;
-            // pathVisual += "R ";
-            this.Ia.addPath("0");
-        } else if(1 == this.positionMoveNumber){ //esquerda
-            this.playerPosition[0]--;
-            // pathVisual += "L ";
-            this.Ia.addPath("1");
-        } else if(2 == this.positionMoveNumber){ //baixo
-            this.playerPosition[1]++;
-            // pathVisual += "D ";
-            this.Ia.addPath("2");
-        } else if(3 == this.positionMoveNumber){ //cima
-            this.playerPosition[1]--;
-            // pathVisual += "U ";
-            this.Ia.addPath("3");
-        } else { //morte
-            console.log("ERROR", this.positionMoveNumber);
-            return;
+    next() {
+        this.calculateMove();
+    }
+
+    init() {
+        document.querySelector(".up").addEventListener("click", this.up.bind(this));
+        document.querySelector(".down").addEventListener("click", this.down.bind(this));
+        document.querySelector(".right").addEventListener("click", this.right.bind(this));
+        document.querySelector(".left").addEventListener("click", this.left.bind(this));
+        document.querySelector("#automate").addEventListener("click", this.automate.bind(this));
+        document.querySelector("#stop").addEventListener("click", this.stop.bind(this));
+        document.querySelector("#nextGenerationButton").addEventListener("click", this.next.bind(this));
+
+        this.createMatriz();
+    }
+
+    automate(){
+        this.automateKey = true;
+
+        this.calculateMove();
+    }
+
+    async createMatriz(){
+        this.individuals = this.Ia.createIndividuals(this.numberOfIndividuals);
+        this.deathIndividuals = 0;
+
+        this.matriz = await generateMatriz();
+
+        const { newMatriz, individuals } = await calculateMatriz(this.matriz, this.individuals);
+
+        this.newMatriz = newMatriz;
+        this.individuals = individuals;
+    }
+
+    async calculateMove() {
+        for(let i = 0; i < this.numberOfIndividuals; i++){
+            if(this.individuals[i].status == "alive") {
+                this.positionMoveNumber = await this.Ia.choosePath(this.individuals[i], this.newMatriz, this.wave);
+
+                await this.movePlayer(this.individuals[i]);
+            }
         }
 
-        this.player = this.newMatriz[this.playerPosition[1]][this.playerPosition[0]];
         this.addMove();
     }
 
-    addMove() {
+    async movePlayer(individual) {
+        return new Promise(resolve => {
+            if(0 == this.positionMoveNumber){ //direita
+                individual.position[0]++;
+                this.Ia.addPath("0", individual.id);
+            } else if(1 == this.positionMoveNumber){ //esquerda
+                individual.position[0]--;
+                this.Ia.addPath("1", individual.id);
+            } else if(2 == this.positionMoveNumber){ //baixo
+                individual.position[1]++;
+                this.Ia.addPath("2", individual.id);
+            } else if(3 == this.positionMoveNumber){ //cima
+                individual.position[1]--;
+                this.Ia.addPath("3", individual.id);
+            } else { //morte
+                console.log("ERROR", this.positionMoveNumber);
+                return;
+            }
+
+            individual.cellValue = this.newMatriz[individual.position[1]][individual.position[0]];
+            resolve();
+        });
+    }
+
+    async addMove() {
         this.matriz = this.newMatriz.slice().map(arrays => arrays.slice());
 
-        this.Draw.draw(this.matriz, this.playerPosition);
+        await this.Draw.draw(this.matriz, this.individuals);
 
-        this.valuePossibleMovement = [ null, null, null, null ];
         this.wave++;
         document.querySelector(`#generation`).innerText = `Wave: ${this.wave}`;
 
-        if(this.player == 1){ // Isso aqui pode ser feito na própria Ia, pois eu posso ter vários indivíduos
-            this.attempts++;
+        Object.values(this.individuals).forEach(individual => {
+            if(individual.status == "death") {
+                return;
+            }
 
-            this.Ia.death(this.playerPosition);
+            if(individual.cellValue == 1){
+                this.attempts++;
 
-            console.log("Tentativa Atual:", this.attempts);
-            console.log("wave:", this.wave);
-            console.log("Game Over: ", this.player);
-            console.log("Número Sorteado:", this.numberToFollow);
-            this.wave = 0;
-            this.playerPosition[0] = 0;
-            this.playerPosition[1] = 0;
-            this.player = 3;
+                individual.status = this.Ia.death(individual);
+                this.deathIndividuals++;
 
-            setTimeout(async () => {
-                if(this.automateKey) {
-                    this.matriz = await generateMatriz();
+                if(this.deathIndividuals == this.numberOfIndividuals) {
+                    console.log("Tentativa Atual:", this.attempts);
+                    console.log("wave:", this.wave);
+                    console.log("Game Over: ", individual.cellValue);
 
-                    const { newMatriz, valuePossibleMovement } = await calculateMatriz(this.matriz, this.playerPosition, this.valuePossibleMovement);
+                    this.wave = 0;
+                    this.Ia.saveBestGeneration();
 
-                    this.newMatriz = newMatriz;
-                    this.valuePossibleMovement = valuePossibleMovement;
+                    setTimeout(async () => {
+                        await this.createMatriz();
 
-                    this.automate();
+                        if(this.automateKey) {
+                            this.calculateMove();
+                        }
+                    }, 50);
                 }
-            }, 500);
-        } else if(this.player == 4){
-            this.Ia.win(this.playerPosition);
+            } else if(individual.cellValue == 4){
+                console.log("Parabéns, você chegou!");
+                console.log("Tentativa Atual:", this.attempts);
+                console.log("wave:", this.wave);
 
-            console.log("Parabéns, você chegou!");
-            console.log("Tentativa Atual:", this.attempts);
-            console.log("wave:", this.wave);
-            console.log("Player position: ", this.player);
-            console.log("Position:", this.playerPosition[1], this.playerPosition[0]);
+                this.Ia.win(individual);
 
-            setTimeout(() => {
-                alert("Parabéns, você conseguiu!");
-            }, 300);
-        } else {
+                setTimeout(() => {
+                    alert("Parabéns, você conseguiu!");
+                }, 300);
+
+                this.win = true;
+            }
+        });
+
+        if(this.deathIndividuals != this.numberOfIndividuals && !this.win) {
             setTimeout(async () => {
-                const { newMatriz, valuePossibleMovement } = await calculateMatriz(this.matriz, this.playerPosition, this.valuePossibleMovement);
+                const { newMatriz, individuals } = await calculateMatriz(this.matriz, this.individuals);
 
                 this.newMatriz = newMatriz;
-                this.valuePossibleMovement = valuePossibleMovement;
+                this.individuals = individuals;
 
                 if(this.automateKey) {
-                    this.automate();
+                    this.calculateMove();
                 }
-            }, 100);
+            }, 10);
         }
     }
 }
