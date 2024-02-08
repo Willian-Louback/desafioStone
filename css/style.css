@@ -18,3 +18,27 @@ button {
     display: flex;
     border: 1px solid black;
 }
+
+@media (max-width: 480px){
+    button {
+        height: 40px;
+        width: 100px;
+    }
+
+    .area {
+        width: 340px;
+        height: 260px;
+    }
+}
+
+@media screen and (min-width: 480px) and (max-width: 685px){
+    button {
+        height: 50px;
+        width: 100px;
+    }
+
+    .area {
+        width: 510px;
+        height: 390px;
+    }
+}

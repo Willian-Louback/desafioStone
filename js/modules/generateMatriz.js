@@ -1,6 +1,6 @@
 import Draw from "./Draw.js";
 
-const generateMatriz = async () => {
+const generateMatriz = async (draw) => {
     return new Promise(resolve => {
         fetch("../../data/padrao.txt")
             .then(response => response.text())
@@ -11,7 +11,7 @@ const generateMatriz = async () => {
                     matriz.push(value.split(" "));
                 });
 
-                const draw = new Draw();
+                draw.configCanvas();
 
                 draw.draw(
                     matriz,

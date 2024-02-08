@@ -73,7 +73,7 @@ class Board {
         this.individuals = this.Ia.createIndividuals(this.numberOfIndividuals);
         this.deathIndividuals = 0;
 
-        this.matriz = await generateMatriz();
+        this.matriz = await generateMatriz(this.Draw);
 
         const { newMatriz, individuals } = await calculateMatriz(this.matriz, this.individuals);
 

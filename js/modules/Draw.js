@@ -7,6 +7,25 @@ class Draw {
         this.positionDraw = [ 0, 0 ];
     }
 
+    configCanvas() {
+        const widthScreen = window.innerWidth;
+
+        if(widthScreen < 480) {
+            console.log("foi");
+            this.canvas.width = 340;
+            this.canvas.height = 260;
+
+            this.heightCell = this.canvas.height / 65;
+            this.widthCell = this.canvas.width / 85;
+        } else if(widthScreen > 480 && widthScreen < 685) {
+            this.canvas.width = 510;
+            this.canvas.height = 390;
+
+            this.heightCell = this.canvas.height / 65;
+            this.widthCell = this.canvas.width / 85;
+        }
+    }
+
     async draw(matriz, individuals) {
         return new Promise(resolve => {
             this.ctx.clearRect(this.positionDraw[0], this.positionDraw[1], this.widthCell, this.heightCell);
