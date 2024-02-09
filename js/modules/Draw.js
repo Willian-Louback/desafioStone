@@ -2,8 +2,8 @@ class Draw {
     constructor() {
         this.canvas = document.getElementById("matriz");
         this.ctx = this.canvas.getContext("2d");
-        this.heightCell = this.canvas.height / 65;
-        this.widthCell = this.canvas.width / 85;
+        this.heightCell;
+        this.widthCell;
         this.positionDraw = [ 0, 0 ];
     }
 
@@ -19,6 +19,12 @@ class Draw {
         } else if(widthScreen >= 480 && widthScreen <= 685) {
             this.canvas.width = 510;
             this.canvas.height = 390;
+
+            this.heightCell = this.canvas.height / 65;
+            this.widthCell = this.canvas.width / 85;
+        } else {
+            this.canvas.width = 680;
+            this.canvas.height = 520;
 
             this.heightCell = this.canvas.height / 65;
             this.widthCell = this.canvas.width / 85;

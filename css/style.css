@@ -12,6 +12,12 @@ button {
     font-size: 15px;
 }
 
+.sortButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+}
+
 .area {
     width: 680px;
     height: 520px;
@@ -29,6 +35,11 @@ button {
         width: 340px;
         height: 260px;
     }
+
+    .sortButtons {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 @media screen and (min-width: 480px) and (max-width: 685px){
@@ -40,5 +51,10 @@ button {
     .area {
         width: 510px;
         height: 390px;
+    }
+
+    .sortButtons {
+        display: flex;
+        flex-direction: column;
     }
 }

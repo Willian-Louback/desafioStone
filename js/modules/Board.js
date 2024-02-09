@@ -9,7 +9,8 @@ class Board {
         this.matriz;
         this.newMatriz;
         this.individuals;
-        this.numberOfIndividuals = 500;
+        this.numberOfIndividuals = document.querySelector("#numberOfIndividuals").value;
+        this.velocity = document.querySelector("#velocity").value;
         this.deathIndividuals = 0;
         this.wave = 0;
         this.attempts = 1;
@@ -24,39 +25,51 @@ class Board {
         this.automateKey = false;
     }
 
-    up(){
-        this.positionMoveNumber = 3;
+    // up(){
+    //     this.positionMoveNumber = 3;
 
-        this.movePlayer(0);
-    }
+    //     this.movePlayer(0);
+    // }
 
-    down(){
-        this.positionMoveNumber = 2;
+    // down(){
+    //     this.positionMoveNumber = 2;
 
-        this.movePlayer(0);
-    }
+    //     this.movePlayer(0);
+    // }
 
-    left(){
-        this.positionMoveNumber = 1;
+    // left(){
+    //     this.positionMoveNumber = 1;
 
-        this.movePlayer(0);
-    }
+    //     this.movePlayer(0);
+    // }
 
-    right(){
-        this.positionMoveNumber = 0;
+    // right(){
+    //     this.positionMoveNumber = 0;
 
-        this.movePlayer(0);
-    }
+    //     this.movePlayer(0);
+    // }
 
     next() {
         this.calculateMove();
     }
 
+    updateNumberOfIndividuals(e) {
+        this.numberOfIndividuals = e.target.value;
+        this.createMatriz();
+        return;
+    }
+
+    updateVelocity(e) {
+        this.velocity = e.target.value;
+    }
+
     init() {
-        document.querySelector(".up").addEventListener("click", this.up.bind(this));
-        document.querySelector(".down").addEventListener("click", this.down.bind(this));
-        document.querySelector(".right").addEventListener("click", this.right.bind(this));
-        document.querySelector(".left").addEventListener("click", this.left.bind(this));
+        // document.querySelector(".up").addEventListener("click", this.up.bind(this));
+        // document.querySelector(".down").addEventListener("click", this.down.bind(this));
+        // document.querySelector(".right").addEventListener("click", this.right.bind(this));
+        // document.querySelector(".left").addEventListener("click", this.left.bind(this));
+        document.querySelector("#numberOfIndividuals").addEventListener("change", this.updateNumberOfIndividuals.bind(this));
+        document.querySelector("#velocity").addEventListener("change", this.updateVelocity.bind(this));
         document.querySelector("#automate").addEventListener("click", this.automate.bind(this));
         document.querySelector("#stop").addEventListener("click", this.stop.bind(this));
         document.querySelector("#nextGenerationButton").addEventListener("click", this.next.bind(this));
@@ -71,8 +84,9 @@ class Board {
     }
 
     async createMatriz(){
-        this.individuals = this.Ia.createIndividuals(this.numberOfIndividuals);
+        this.wave = 0;
         this.deathIndividuals = 0;
+        this.individuals = this.Ia.createIndividuals(this.numberOfIndividuals);
 
         this.matriz = await generateMatriz(this.Draw);
 
@@ -140,7 +154,6 @@ class Board {
                     console.log("wave:", this.wave);
                     console.log("Game Over: ", individual.cellValue);
 
-                    this.wave = 0;
                     this.Ia.saveBestGeneration();
 
                     setTimeout(async () => {
@@ -149,7 +162,7 @@ class Board {
                         if(this.automateKey) {
                             this.calculateMove();
                         }
-                    }, 50);
+                    }, this.velocity + 30);
                 }
             } else if(individual.cellValue == 4){
                 console.log("Parabéns, você chegou!");
@@ -173,7 +186,7 @@ class Board {
                 if(this.automateKey) {
                     this.calculateMove();
                 }
-            }, 30);
+            }, this.velocity);
         }
     }
 }
