@@ -9,7 +9,7 @@ class Board {
         this.matriz;
         this.newMatriz;
         this.individuals;
-        this.numberOfIndividuals = 400;
+        this.numberOfIndividuals = 500;
         this.deathIndividuals = 0;
         this.wave = 0;
         this.attempts = 1;
@@ -173,7 +173,7 @@ class Board {
                 if(this.automateKey) {
                     this.calculateMove();
                 }
-            }, 10);
+            }, 30);
         }
     }
 }

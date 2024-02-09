@@ -53,7 +53,7 @@ class Draw {
                             if(valueNumber == 1) {
                                 this.ctx.fillStyle = "black";
                             } else {
-                                this.ctx.fillStyle = "red";
+                                this.ctx.fillStyle = individual.color;
                             }
                             this.ctx.fillRect(this.positionDraw[0] + this.widthCell / 4, this.positionDraw[1] + this.heightCell / 4, this.widthCell / 2, this.heightCell / 2);
                         }

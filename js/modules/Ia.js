@@ -45,7 +45,8 @@ class Ia {
                 numberToFollow: 0,
                 pathCounter: 0,
                 distance: 148,
-                status: "alive"
+                status: "alive",
+                color: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`
             };
 
             individualsToReturn[i] = {
@@ -53,7 +54,8 @@ class Ia {
                 position: [ 0, 0 ],
                 cellValue: 3,
                 valuePossibleMovement: [ null, null, null, null ],
-                status: "alive"
+                status: "alive",
+                color: this.individuals[i].color
             };
         }
 
@@ -229,11 +231,11 @@ class Ia {
 
         this.individuals[individual.id].distance = this.currentDistance;
 
-        console.log("Indivíduo:", this.individuals[individual.id]);
-        console.log("Distância restante:", this.currentDistance);
-        console.log("Melhor distância:", this.distance);
-        console.log("Geração atual:", this.individuals[individual.id].path);
-        console.log("Melhor geração: ", this.bestGeneration);
+        // console.log("Indivíduo:", this.individuals[individual.id]);
+        // console.log("Distância restante:", this.currentDistance);
+        // console.log("Melhor distância:", this.distance);
+        // console.log("Geração atual:", this.individuals[individual.id].path);
+        // console.log("Melhor geração: ", this.bestGeneration);
 
         this.currentDistance = 148;
         this.individuals[individual.id].status = "death";
