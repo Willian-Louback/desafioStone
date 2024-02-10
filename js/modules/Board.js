@@ -54,6 +54,11 @@ class Board {
     }
 
     updateNumberOfIndividuals(e) {
+        if(e.target.value > 1000) {
+            alert("Coloque menos de 1000 indivíduos para evitar lag.");
+            return;
+        }
+
         this.numberOfIndividuals = e.target.value;
         this.createMatriz();
         return;
