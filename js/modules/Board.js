@@ -13,7 +13,7 @@ class Board {
         this.velocity = document.querySelector("#velocity").value;
         this.deathIndividuals = 0;
         this.wave = 0;
-        this.attempts = 1;
+        this.attempts = 0;
         this.positionMoveNumber;
         this.automateKey = false;
         this.Ia = new Ia();
