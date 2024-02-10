@@ -144,12 +144,12 @@ class Board {
             }
 
             if(individual.cellValue == 1){
-                this.attempts++;
 
                 individual.status = this.Ia.death(individual);
                 this.deathIndividuals++;
 
                 if(this.deathIndividuals == this.numberOfIndividuals) {
+                    this.attempts++;
                     console.log("Tentativa Atual:", this.attempts);
                     console.log("wave:", this.wave);
                     console.log("Game Over: ", individual.cellValue);
